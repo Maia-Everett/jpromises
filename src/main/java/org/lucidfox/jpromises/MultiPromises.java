@@ -1,4 +1,4 @@
-package org.lucidfox.promises;
+package org.lucidfox.jpromises;
 
 final class MultiPromises {
 	private MultiPromises() { }

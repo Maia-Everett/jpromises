@@ -1,21 +1,31 @@
-package org.lucidfox.promises;
+package org.lucidfox.jpromises;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Promise<V> {
+public final class Promise<V> {
 	public static <V> Promise<V> nil() {
 		return Promise.resolve(null);
 	}
 	
 	public static <V> Promise<V> resolve(final V value) {
-		return new Promise<V>(value);
+		return new Promise<>(new PromiseHandler<V>() {
+			@Override
+			public void handle(final Resolver<V> resolve, final Rejector reject) {
+				resolve.resolve(value);
+			}
+		});
 	}
 	
 	public static <V> Promise<V> reject(final Throwable exception) {
-		return new Promise<V>(exception);
+		return new Promise<>(new PromiseHandler<V>() {
+			@Override
+			public void handle(final Resolver<V> resolve, final Rejector reject) {
+				reject.reject(exception);
+			}
+		});
 	}
 	
 	@SafeVarargs
@@ -67,16 +77,6 @@ public class Promise<V> {
 				processStateUpdate();
 			}
 		});
-	}
-	
-	private Promise(final V value) {
-		state = State.RESOLVED;
-		resolvedValue = value;
-	}
-	
-	private Promise(final Throwable exception) {
-		state = State.REJECTED;
-		rejectedException = exception;
 	}
 
 	public <R> Promise<R> then(final ResolveCallback<V, R> onResolve, final RejectCallback<R> onReject) {
