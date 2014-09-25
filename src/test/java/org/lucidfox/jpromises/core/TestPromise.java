@@ -1,16 +1,22 @@
 package org.lucidfox.jpromises.core;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import org.junit.Test;
-import org.lucidfox.jpromises.core.Promise;
-import org.lucidfox.jpromises.core.PromiseHandler;
-import org.lucidfox.jpromises.core.Rejector;
-import org.lucidfox.jpromises.core.ResolveCallback;
-import org.lucidfox.jpromises.core.Resolver;
 
 public class TestPromise {
 	@Test
 	public void testBlah() {
-		new Promise<>(new PromiseHandler<String>() {
+		final Executor executor = Executors.newSingleThreadExecutor();
+		final PromiseFactory factory = new PromiseFactory(new DeferredInvoker() {
+			@Override
+			public void invokeDeferred(final Runnable task) {
+				executor.execute(task);
+			}
+		});
+		
+		factory.promise(new PromiseHandler<String>() {
 			@Override
 			public void handle(final Resolver<String> resolve, final Rejector reject) {
 				resolve.resolve("Hello World!");
@@ -19,7 +25,7 @@ public class TestPromise {
 			@Override
 			public Promise<Void> onResolve(final String value) {
 				System.out.println(value);
-				return Promise.nil();
+				return factory.nil();
 			}
 		}, null);
 	}
