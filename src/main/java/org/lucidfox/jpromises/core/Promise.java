@@ -1,4 +1,4 @@
-package org.lucidfox.jpromises;
+package org.lucidfox.jpromises.core;
 
 import java.util.Arrays;
 import java.util.LinkedList;

@@ -1,6 +1,11 @@
-package org.lucidfox.jpromises;
+package org.lucidfox.jpromises.core;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.core.Promise;
+import org.lucidfox.jpromises.core.PromiseHandler;
+import org.lucidfox.jpromises.core.Rejector;
+import org.lucidfox.jpromises.core.ResolveCallback;
+import org.lucidfox.jpromises.core.Resolver;
 
 public class TestPromise {
 	@Test
