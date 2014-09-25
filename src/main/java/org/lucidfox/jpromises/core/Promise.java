@@ -167,44 +167,48 @@ public final class Promise<V> implements Thenable<V> {
 		while (!deferreds.isEmpty()) {
 			@SuppressWarnings("unchecked")
 			final Deferred<V, R> deferred = (Deferred<V, R>) deferreds.remove();
-			final Promise<R> nextPromise;
+			final Thenable<R> next;
 			
 			if (state == State.RESOLVED) {
 				if (deferred.resolveCallback == null) {
-					nextPromise = null;
+					next = null;
 				} else {
-					nextPromise = deferred.resolveCallback.onResolve(resolvedValue);
+					next = deferred.resolveCallback.onResolve(resolvedValue);
 				}
 			} else if (state == State.REJECTED) {
 				if (deferred.rejectCallback == null) {
-					nextPromise = null;
+					next = null;
 				} else {
-					nextPromise = deferred.rejectCallback.onReject(rejectedException);
+					next = deferred.rejectCallback.onReject(rejectedException);
 				}
 			} else {
 				throw new AssertionError(); // Cannot be called from a PENDING state
 			}
 			
-			if (nextPromise == null) {
+			if (next == null) {
 				if (state == State.RESOLVED) {
 					deferred.thenResolver.resolve(null);
 				} else {
 					deferred.thenRejector.reject(rejectedException);
 				}
 			} else {
-				nextPromise.then(new ResolveCallback<R, Object>() {
-					@Override
-					public Promise<Object> onResolve(final R value) {
-						deferred.thenResolver.resolve(value);
-						return null;
-					}
-				}, new RejectCallback<Object>() {
-					@Override
-					public Promise<Object> onReject(final Throwable exception) {
-						deferred.thenRejector.reject(exception);
-						return null;
-					}
-				});
+				try {
+					next.then(new ResolveCallback<R, Object>() {
+						@Override
+						public Promise<Object> onResolve(final R value) {
+							deferred.thenResolver.resolve(value);
+							return null;
+						}
+					}, new RejectCallback<Object>() {
+						@Override
+						public Promise<Object> onReject(final Throwable exception) {
+							deferred.thenRejector.reject(exception);
+							return null;
+						}
+					});
+				} catch (final Exception e) {
+					deferred.thenRejector.reject(e);
+				}
 			}
 		}
 	}

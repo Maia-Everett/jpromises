@@ -11,7 +11,7 @@ public interface ResolveCallback<V, R> {
 	 * Called when the promise (thenable) is resolved.
 	 *
 	 * @param value the value with which the promise is resolved
-	 * @return the promise to be chained after the current promise is resolved (optional)
+	 * @return the promise (thenable) to be chained after the current promise is resolved (optional)
 	 */
-	Promise<R> onResolve(V value);
+	Thenable<R> onResolve(V value);
 }
