@@ -150,7 +150,11 @@ public final class Promise<V> implements Thenable<V> {
 			}
 			
 			if (nextPromise == null) {
-				deferred.thenResolver.resolve(null);
+				if (state == State.RESOLVED) {
+					deferred.thenResolver.resolve(null);
+				} else {
+					deferred.thenRejector.reject(rejectedException);
+				}
 			} else {
 				nextPromise.then(new ResolveCallback<R, Object>() {
 					@Override
