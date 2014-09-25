@@ -1,5 +1,5 @@
 package org.lucidfox.jpromises.core;
 
 public interface PromiseHandler<V> {
-	void handle(Resolver<V> resolve, Rejector reject);
+	void handle(Resolver<V> resolve, Rejector reject) throws Exception;
 }
