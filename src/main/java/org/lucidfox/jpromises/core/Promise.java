@@ -3,6 +3,42 @@ package org.lucidfox.jpromises.core;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * <p>
+ * The core class of the JPromises library.
+ * </p><p>
+ * {@code Promise} is a concrete implementation of {@link Thenable} that represents a value to be computed later.
+ * </p><p>
+ * A {@code Promise} is instantiated with a {@link PromiseHandler}, which computes the value and sets the promise
+ * into either the resolved or rejected state. Further attempts to change the promise's state will throw
+ * {@link IllegalStateException}.
+ * </p><p>
+ * Once a promise is either resolved or rejected, it will chain to all resolve or reject callbacks added by
+ * {@link then}, in the same order in which {@code then} is called. For each call to {@code then}, either
+ * the resolved callback is called if the promise was resolved (with the promise's resolved value), or
+ * the rejected callback is called if the promise was rejected (with the promise's rejection reason).
+ * </p><p>
+ * If the callback returns a promise, then the promise previously returned by {@code then} is chained after
+ * the promise returned by the callback, using its {@code then} method, and resolved/rejected with that promise's
+ * result or reject reason, respectively. Otherwise, the promise previously returned by {@code then} is either resolved
+ * with {@code null}, or rejected with the current promise's reject reason, depending on the current promise's state.
+ * </p><p>
+ * (Note that resolving the promise returned by {@code then} with {@code null} goes against the JavaScript Promises/A+
+ * specification. In Java's typesafe world, it is necessary because, generally speaking, the returned promise may
+ * have a different value type compared to the current promise. If you want to work with a meaningful value in the
+ * chained promise, pass it a meaningful value through the resolved callback, perhaps using
+ * {@link PromiseFactory#resolve}.)
+ * </p><p>
+ * Callbacks passed via {@code then} are guaranteed to be invoked asynchronously, as defined by the promise factory's
+ * specified deferred invoker. In practice, this usually means they are invoked after all pending events in the
+ * application's event loop are processed.
+ * </p><p>
+ * This class is thread-safe. Objects passed to the {@link PromiseHandler} or {@link #then} can be called from
+ * any thread without corrupting the promise's state.
+ * </p>
+ *
+ * @param <V> the value type
+ */
 public final class Promise<V> implements Thenable<V> {
 	private enum State { PENDING, RESOLVED, REJECTED }
 	

@@ -5,21 +5,67 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * <p>
+ * A factory for creating Promise objects. It encapsulates a {@link DeferredInvoker} to create {@link Promise} objects
+ * using the specified deferred invocation policy.
+ * </p>
+ * <p>
+ * <strong>Note:</strong> In the JavaScript Promises implementation, the methods returned by this class are present as
+ * static methods of the {@code Promise} class. Here, they are collected in a separate factory class to allow
+ * specifying different deferred invocation policies. This class is not made final, so that it can be subclassed
+ * with more convenience methods, or bound to a specific {@code DeferredInvoker}.
+ * </p>
+ */
 public class PromiseFactory {
 	private final DeferredInvoker deferredInvoker;
-	
+	/**
+	 * Instantiates a new promise factory.
+	 *
+	 * @param deferredInvoker the deferred invoker, responsible for scheduling asynchronous execution;
+	 * 			see {@link DeferredInvoker} documentation for more information.
+	 */
 	public PromiseFactory(final DeferredInvoker deferredInvoker) {
 		this.deferredInvoker = deferredInvoker;
 	}
 	
-	public <V> Promise<V> promise(final PromiseHandler<V> handler) {
+	/**
+	 * Instantiates a new {@link Promise} with the given {@link PromiseHandler}. The execution of the promise handler
+	 * starts immediately.
+	 *
+	 * @param <V> the value type of the promise
+	 * @param handler the promise handler
+	 * @return the new promise whose evaluation is specified by the handler
+	 */
+	public final <V> Promise<V> promise(final PromiseHandler<V> handler) {
 		return new Promise<>(deferredInvoker, handler);
 	}
 	
+	/**
+	 * <p>
+	 * Instantiates a {@link Promise} resolved to {@code null}.
+	 * </p><p>
+	 * This method will rarely be used. Returning {@code null} from resolved/rejected callbacks does the same
+	 * thing, and is faster. It may be necessary if interacting with custom thenables that do not allow
+	 * resolved/rejected callbacks to return null.
+	 * </p>
+	 *
+	 * @param <V> the value type of the promise
+	 * @return the promise resolved to null
+	 */
 	public final <V> Promise<V> nil() {
 		return resolve(null);
 	}
 	
+	/**
+	 * Instantiates a {@link Promise} resolved to the specified value. This is useful for returning a static value
+	 * from resolved/rejected callbacks in {@code then}, which is allowed by the Promises/A+ specification, but not
+	 * expressible in Java's static type system.
+	 *
+	 * @param <V> the value type of the promise
+	 * @param value the value
+	 * @return the promise resolved to the value
+	 */
 	public final <V> Promise<V> resolve(final V value) {
 		return promise(new PromiseHandler<V>() {
 			@Override
@@ -29,6 +75,22 @@ public class PromiseFactory {
 		});
 	}
 	
+	/**
+	 * <p>
+	 * Returns a {@link Promise} wrapping the given {@link Thenable}. If {@code thenable} is a {@code Promise}, then it
+	 * is returned unchanged. Otherwise, this method creates a new {@code Promise} whose resolution is chained to the
+	 * thenable's {@code then} method.
+	 * </p>
+	 * <p>
+	 * <strong>Tip:</strong> This method can be used for typesafe casting of {@code Promise<Derived>} to
+	 * {@code Promise<Base>} if {@code Base} is a supertype (superclass or superinterface) of {@code Derived}.
+	 * Such use does not create new objects.
+	 * </p>
+	 *
+	 * @param <V> the value type of the promise
+	 * @param thenable the thenable
+	 * @return the promise
+	 */
 	public final <V> Promise<V> resolve(final Thenable<? extends V> thenable) {
 		if (thenable instanceof Promise) {
 			// Short-circuit
@@ -60,6 +122,13 @@ public class PromiseFactory {
 		});
 	}
 	
+	/**
+	 * Instantiates a {@link Promise} that starts rejected with the given exception as its rejection reason.
+	 *
+	 * @param <V> the value type of the promise
+	 * @param exception the exception (rejection reason)
+	 * @return the new promise rejected with the given exception
+	 */
 	public final <V> Promise<V> reject(final Throwable exception) {
 		return promise(new PromiseHandler<V>() {
 			@Override
@@ -69,12 +138,31 @@ public class PromiseFactory {
 		});
 	}
 	
+	/**
+	 * Returns a {@code Promise} that wraps multiple thenables or promises. The returned promise is resolved when all
+	 * thenables are resolved, or rejected when at least one thenable is rejected. The returned promise's value is
+	 * a list containing the results of the thenables passed to the method, in the order passed.
+	 *
+	 * @param <V> the lower bound for value types of the combined thenables
+	 * @param thenables the thenables to combine
+	 * @return the combined promise
+	 */
 	@SafeVarargs
 	public final <V> Promise<List<V>> all(final Thenable<? extends V>... thenables) {
 		return all(Arrays.asList(thenables));
 	}
 	
-	public <V> Promise<List<V>> all(final Collection<? extends Thenable<? extends V>> thenables) {
+	/**
+	 * Returns a {@code Promise} that wraps multiple thenables or promises. The returned promise is resolved when all
+	 * thenables are resolved, or rejected when at least one thenable is rejected. The returned promise's value is
+	 * a list containing the results of the thenables passed to the method, in the order passed if {@code thenables}
+	 * is an ordered collection, or in an undefined order otherwise.
+	 *
+	 * @param <V> the lower bound for value types of the combined thenables
+	 * @param thenables the thenables to combine
+	 * @return the combined promise
+	 */
+	public final <V> Promise<List<V>> all(final Collection<? extends Thenable<? extends V>> thenables) {
 		return promise(new PromiseHandler<List<V>>() {
 			private int remaining;
 			private Object lock = new Object();
@@ -131,12 +219,30 @@ public class PromiseFactory {
 		});
 	}
 	
+	/**
+	 * Returns a {@code Promise} that wraps multiple thenables or promises. The returned promise is resolved when at
+	 * least one thenable are resolved, or rejected when at least one thenable is rejected. It is set to the state of
+	 * the first thenable to be resolved or rejected.
+	 *
+	 * @param <V> the lower bound for value types of the combined thenables
+	 * @param thenables the thenables to combine
+	 * @return the combined promise
+	 */
 	@SafeVarargs
 	public final <V> Promise<V> race(final Thenable<? extends V>... thenables) {
 		return race(Arrays.asList(thenables));
 	}
 	
-	public <V> Promise<V> race(final Iterable<? extends Thenable<? extends V>> thenables) {
+	/**
+	 * Returns a {@code Promise} that wraps multiple thenables or promises. The returned promise is resolved when at
+	 * least one thenable are resolved, or rejected when at least one thenable is rejected. It is set to the state of
+	 * the first thenable to be resolved or rejected.
+	 *
+	 * @param <V> the lower bound for value types of the combined thenables
+	 * @param thenables the thenables to combine
+	 * @return the combined promise
+	 */
+	public final <V> Promise<V> race(final Iterable<? extends Thenable<? extends V>> thenables) {
 		return promise(new PromiseHandler<V>() {
 			private volatile boolean anyFinished = false;
 			
