@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.lucidfox.jpromises.annotation.GwtCompatible;
+
 /**
  * <p>
  * A factory for creating Promise objects. It encapsulates a {@link DeferredInvoker} to create {@link Promise} objects
@@ -17,6 +19,7 @@ import java.util.List;
  * with more convenience methods, or bound to a specific {@code DeferredInvoker}.
  * </p>
  */
+@GwtCompatible
 public class PromiseFactory {
 	private final DeferredInvoker deferredInvoker;
 	/**

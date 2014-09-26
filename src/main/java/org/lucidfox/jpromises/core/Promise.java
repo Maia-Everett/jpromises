@@ -3,6 +3,8 @@ package org.lucidfox.jpromises.core;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.lucidfox.jpromises.annotation.GwtCompatible;
+
 /**
  * <p>
  * The core class of the JPromises library.
@@ -39,6 +41,7 @@ import java.util.Queue;
  *
  * @param <V> the value type
  */
+@GwtCompatible
 public final class Promise<V> implements Thenable<V> {
 	private enum State { PENDING, RESOLVED, REJECTED }
 	
