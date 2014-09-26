@@ -13,11 +13,12 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 
 sourceCompatibility = 1.7
-version = '0.0.1'
+group = 'org.lucidfox.jpromises'
+version = '0.1'
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Promises', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'JPromises', 'Implementation-Version': version
     }
 }
 
@@ -31,7 +32,26 @@ dependencies {
 }
 
 test {
-    systemProperties 'property': 'value'
+    
+}
+
+javadoc {
+	destinationDir = file('javadoc')
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
 }
 
 uploadArchives {
