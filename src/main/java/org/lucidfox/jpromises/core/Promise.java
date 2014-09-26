@@ -130,7 +130,7 @@ public final class Promise<V> implements Thenable<V> {
 	}
 
 	@Override
-	public <R> Promise<R> then(final ResolveCallback<V, R> onResolve, final RejectCallback<R> onReject) {
+	public <R> Promise<R> then(final ResolveCallback<? super V, R> onResolve, final RejectCallback<R> onReject) {
 		final Deferred<V, R> deferred = new Deferred<>();
 		deferred.resolveCallback = onResolve;
 		deferred.rejectCallback = onReject;
@@ -193,15 +193,15 @@ public final class Promise<V> implements Thenable<V> {
 				}
 			} else {
 				try {
-					next.then(new ResolveCallback<R, Object>() {
+					next.then(new ResolveCallback<R, Void>() {
 						@Override
-						public Promise<Object> onResolve(final R value) {
+						public Promise<Void> onResolve(final R value) {
 							deferred.thenResolver.resolve(value);
 							return null;
 						}
-					}, new RejectCallback<Object>() {
+					}, new RejectCallback<Void>() {
 						@Override
-						public Promise<Object> onReject(final Throwable exception) {
+						public Promise<Void> onReject(final Throwable exception) {
 							deferred.thenRejector.reject(exception);
 							return null;
 						}
@@ -214,7 +214,7 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	private static class Deferred<V, R> {
-		private ResolveCallback<V, R> resolveCallback;
+		private ResolveCallback<? super V, R> resolveCallback;
 		private RejectCallback<R> rejectCallback;
 		private Resolver<R> thenResolver;
 		private Rejector thenRejector;

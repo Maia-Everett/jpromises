@@ -102,10 +102,7 @@ public class PromiseFactory {
 		return promise(new PromiseHandler<V>() {
 			@Override
 			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
-				@SuppressWarnings("unchecked")
-				final Thenable<V> thenableCast = (Thenable<V>) thenable;
-				
-				thenableCast.then(new ResolveCallback<V, Void>() {
+				thenable.then(new ResolveCallback<V, Void>() {
 					@Override
 					public Promise<Void> onResolve(final V value) {
 						resolve.resolve(value);
@@ -176,13 +173,11 @@ public class PromiseFactory {
 					int i = 0;
 					
 					for (final Thenable<? extends V> thenable: thenables) {
-						@SuppressWarnings("unchecked")
-						final Thenable<V> thenableCast = (Thenable<V>) thenable;
 						final int index = i;
 						i++;
 						result.add(null);
 						
-						thenableCast.then(new ResolveCallback<V, Void>() {
+						thenable.then(new ResolveCallback<V, Void>() {
 							@Override
 							public Promise<Void> onResolve(final V value) {
 								synchronized (lock) {
@@ -250,10 +245,7 @@ public class PromiseFactory {
 			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
 				try {
 					for (final Thenable<? extends V> thenable: thenables) {
-						@SuppressWarnings("unchecked")
-						final Thenable<V> thenableCast = (Promise<V>) thenable;
-						
-						thenableCast.then(new ResolveCallback<V, Void>() {
+						thenable.then(new ResolveCallback<V, Void>() {
 							@Override
 							public Promise<Void> onResolve(final V value) {
 								if (!anyFinished) {

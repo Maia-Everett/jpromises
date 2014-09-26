@@ -36,5 +36,6 @@ public interface Thenable<V> {
 	 * @throws Exception Optionally, {@link Thenable} can throw exceptions, though its main implementation,
 	 * 			{@link Promise}, does not. The {@link Promise} class treats thrown exceptions as rejection.
 	 */
-	<R> Thenable<R> then(final ResolveCallback<V, R> onResolve, final RejectCallback<R> onReject) throws Exception;
+	<R> Thenable<R> then(final ResolveCallback<? super V, R> onResolve, final RejectCallback<R> onReject)
+			throws Exception;
 }
