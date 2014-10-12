@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Abstract base class setting up some plumbing for JPromises test cases.
  */
 abstract class AbstractPromiseTestCase {
-	private static final int TEST_METHOD_TIMEOUT_SECONDS = 5;
+	private static final int TEST_METHOD_TIMEOUT_SECONDS = 5000;
 	
 	/**
 	 * A helper object passed into {@link #runTest} to allow test methods to control the test harness.
@@ -56,7 +56,7 @@ abstract class AbstractPromiseTestCase {
 							task.run();
 						} catch (final Exception e) {
 							caught.set(e);
-							executor.shutdown();
+							executor.shutdownNow();
 						}
 						
 						return null;
@@ -79,7 +79,7 @@ abstract class AbstractPromiseTestCase {
 										executor.schedule(task, milliseconds, TimeUnit.MILLISECONDS);
 									} catch (final Exception e) {
 										caught.set(e);
-										executor.shutdown();
+										executor.shutdownNow();
 									}
 									
 									return null;
@@ -89,12 +89,18 @@ abstract class AbstractPromiseTestCase {
 						
 						@Override
 						public void done() {
-							executor.shutdown();
+							// Shutdown is deferred to allow any currently pending tasks to start execution.
+							executor.submit(new Runnable() {
+								@Override
+								public void run() {
+									executor.shutdown();
+								}
+							});
 						}
 					});
 				} catch (final Exception e) {
 					caught.set(e);
-					executor.shutdown();
+					executor.shutdownNow();
 				}
 				
 				return null;

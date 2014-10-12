@@ -113,7 +113,7 @@ public final class Promise<V> implements Thenable<V> {
 			
 			state = State.RESOLVED;
 			resolvedValue = value;
-			processDeferred();
+			scheduleProcessDeferred();
 		}
 	}
 	
@@ -157,7 +157,7 @@ public final class Promise<V> implements Thenable<V> {
 			
 			state = State.REJECTED;
 			rejectedException = exception;
-			processDeferred();
+			scheduleProcessDeferred();
 		}
 	}
 
@@ -177,20 +177,24 @@ public final class Promise<V> implements Thenable<V> {
 		
 		synchronized (lock) {
 			deferreds.add(deferred);
+			
+			if (state != State.PENDING) {
+				scheduleProcessDeferred();
+			}
 		}
 		
+		return result;
+	}
+	
+	private void scheduleProcessDeferred() {
 		deferredInvoker.invokeDeferred(new Runnable() {
 			@Override
 			public void run() {
 				synchronized (lock) {
-					if (state != State.PENDING) {
-						processDeferred();
-					}
+					processDeferred();
 				}
 			}
 		});
-		
-		return result;
 	}
 	
 	private <R> void processDeferred() {
