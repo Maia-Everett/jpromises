@@ -4,33 +4,33 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-@JsAnalogue("2.1.2.js")
-public class Test212 extends AbstractPromiseTestCase {
+@JsAnalogue("2.1.3.js")
+public class Test213 extends AbstractPromiseTestCase {
 	private static class Dummy { }
 	
 	/**
-	 * 2.1.2.1: When fulfilled, a promise: must not transition to any other state.
+	 * 2.1.3.1: When rejected, a promise: must not transition to any other state.
 	 * 
 	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
 	 * change their state.
 	 */
 	@Test
 	public void testNoTransition() {
-		testFulfilled(new Dummy(), new OnePromiseTest<Dummy>() {
-			private volatile boolean onFulfilledCalled;
+		testRejected(new Exception(), new OnePromiseTest<Dummy>() {
+			private volatile boolean onRejectedCalled;
 			
 			@Override
 			public void run(final Promise<Dummy> promise, final PromiseTestHandler handler) throws Exception {
 				promise.then(new ResolveCallback<Dummy, Void>() {
 					@Override
 					public Thenable<Void> onResolve(final Dummy value) {
-						onFulfilledCalled = true;
+						assertFalse(onRejectedCalled);
 						return null;
 					}
 				}, new RejectCallback<Void>() {
 					@Override
 					public Thenable<Void> onReject(final Throwable exception) {
-						assertFalse(onFulfilledCalled);
+						onRejectedCalled = true;
 						return null;
 					}
 				});
@@ -38,7 +38,7 @@ public class Test212 extends AbstractPromiseTestCase {
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						assertTrue(onFulfilledCalled);
+						assertTrue(onRejectedCalled);
 						handler.done();
 					}
 				}, 100);
@@ -47,7 +47,7 @@ public class Test212 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * Trying to fulfill then immediately reject.
+	 * Trying to reject then immediately fulfill.
 	 * 
 	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
 	 * change their state.
@@ -55,7 +55,7 @@ public class Test212 extends AbstractPromiseTestCase {
 	@Test
 	public void testFulfillThenReject() {
 		runTest(new PromiseTest() {
-			private volatile boolean onFulfilledCalled;
+			private volatile boolean onRejectedCalled;
 			
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
@@ -64,21 +64,21 @@ public class Test212 extends AbstractPromiseTestCase {
 				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
 					@Override
 					public Thenable<Void> onResolve(final Dummy value) {
-						onFulfilledCalled = true;
+						assertFalse(onRejectedCalled);
 						return null;
 					}
 				}, new RejectCallback<Void>() {
 					@Override
 					public Thenable<Void> onReject(final Throwable exception) {
-						assertFalse(onFulfilledCalled);
+						onRejectedCalled = true;
 						return null;
 					}
 				});
 				
-				deferred.resolve(new Dummy());
+				deferred.reject(new Exception());
 				
 				try {
-					deferred.reject(new Exception());
+					deferred.resolve(new Dummy());
 					fail();
 				} catch (final IllegalStateException expected) {
 					// Do nothing
@@ -87,7 +87,7 @@ public class Test212 extends AbstractPromiseTestCase {
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						assertTrue(onFulfilledCalled);
+						assertTrue(onRejectedCalled);
 						handler.done();
 					}
 				}, 100);
@@ -96,7 +96,7 @@ public class Test212 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * Trying to fulfill then reject, delayed.
+	 * Trying to reject then fulfill, delayed.
 	 * 
 	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
 	 * change their state.
@@ -104,7 +104,7 @@ public class Test212 extends AbstractPromiseTestCase {
 	@Test
 	public void testFulfillThenRejectDelayed() {
 		runTest(new PromiseTest() {
-			private volatile boolean onFulfilledCalled;
+			private volatile boolean onRejectedCalled;
 			
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
@@ -113,13 +113,13 @@ public class Test212 extends AbstractPromiseTestCase {
 				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
 					@Override
 					public Thenable<Void> onResolve(final Dummy value) {
-						onFulfilledCalled = true;
+						assertFalse(onRejectedCalled);
 						return null;
 					}
 				}, new RejectCallback<Void>() {
 					@Override
 					public Thenable<Void> onReject(final Throwable exception) {
-						assertFalse(onFulfilledCalled);
+						onRejectedCalled = true;
 						return null;
 					}
 				});
@@ -127,10 +127,10 @@ public class Test212 extends AbstractPromiseTestCase {
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						deferred.resolve(new Dummy());
+						deferred.reject(new Exception());
 						
 						try {
-							deferred.reject(new Exception());
+							deferred.resolve(new Dummy());
 							fail();
 						} catch (final IllegalStateException expected) {
 							// Do nothing
@@ -141,7 +141,7 @@ public class Test212 extends AbstractPromiseTestCase {
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						assertTrue(onFulfilledCalled);
+						assertTrue(onRejectedCalled);
 						handler.done();
 					}
 				}, 100);
@@ -150,7 +150,7 @@ public class Test212 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * Trying to fulfill immediately then reject delayed.
+	 * Trying to reject immediately then fulfill delayed.
 	 * 
 	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
 	 * change their state.
@@ -158,7 +158,7 @@ public class Test212 extends AbstractPromiseTestCase {
 	@Test
 	public void testFulfillImmediatelyThenRejectDelayed() {
 		runTest(new PromiseTest() {
-			private volatile boolean onFulfilledCalled;
+			private volatile boolean onRejectedCalled;
 			
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
@@ -167,24 +167,24 @@ public class Test212 extends AbstractPromiseTestCase {
 				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
 					@Override
 					public Thenable<Void> onResolve(final Dummy value) {
-						onFulfilledCalled = true;
+						assertFalse(onRejectedCalled);
 						return null;
 					}
 				}, new RejectCallback<Void>() {
 					@Override
 					public Thenable<Void> onReject(final Throwable exception) {
-						assertFalse(onFulfilledCalled);
+						onRejectedCalled = true;
 						return null;
 					}
 				});
 				
-				deferred.resolve(new Dummy());
+				deferred.reject(new Exception());
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							deferred.reject(new Exception());
+							deferred.resolve(new Dummy());
 							fail();
 						} catch (final IllegalStateException expected) {
 							// Do nothing
@@ -195,7 +195,7 @@ public class Test212 extends AbstractPromiseTestCase {
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						assertTrue(onFulfilledCalled);
+						assertTrue(onRejectedCalled);
 						handler.done();
 					}
 				}, 100);

@@ -1,8 +1,10 @@
 package org.lucidfox.jpromises.core;
 
+import static org.junit.Assert.*;
+
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -41,7 +43,7 @@ abstract class AbstractPromiseTestCase {
 	}
 	
 	protected final void runTest(final PromiseTest test) {
-		final ExecutorService executor = Executors.newSingleThreadExecutor();
+		final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 		final AtomicReference<Throwable> caught = new AtomicReference<>();
 		
 		final PromiseFactory factory = new PromiseFactory(new DeferredInvoker() {
@@ -74,8 +76,7 @@ abstract class AbstractPromiseTestCase {
 								@Override
 								public Void call() throws Exception {
 									try {
-										Thread.sleep(milliseconds);
-										task.run();
+										executor.schedule(task, milliseconds, TimeUnit.MILLISECONDS);
 									} catch (final Exception e) {
 										caught.set(e);
 										executor.shutdown();
@@ -101,7 +102,9 @@ abstract class AbstractPromiseTestCase {
 		});
 		
 		try {
-			executor.awaitTermination(TEST_METHOD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+			if (!executor.awaitTermination(TEST_METHOD_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+				fail("Wait timeout exceeded");
+			}
 		} catch (final InterruptedException e) {
 			throw new AssertionError(e); // Fail
 		}
