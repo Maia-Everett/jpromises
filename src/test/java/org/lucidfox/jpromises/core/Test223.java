@@ -9,64 +9,71 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 /**
- * 2.2.2: If {@code onFulfilled} is a function...
+ * 2.2.2: If {@code onRejected} is a function...
  */
-@JsAnalogue("2.2.2.js")
-public class Test222 extends AbstractPromiseTestCase {
+@JsAnalogue("2.2.3.js")
+public class Test223 extends AbstractPromiseTestCase {
 	private static class Dummy { }
-	private static class Sentinel { }
 	
-	private static final Sentinel SENTINEL = new Sentinel();
+	private static class SentinelException extends Exception {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -9020701537522840443L;
+	}
+	
+	private static final SentinelException SENTINEL = new SentinelException();
 	
 	/**
-	 * 2.2.2.1: it must be called after `promise` is fulfilled, with `promise`’s fulfillment value as its
+	 * 2.2.2.1: it must be called after `promise` is rejected, with `promise`’s rejection reason as its
 	 * first argument.
 	 */
 	@Test
-	public void testOnResolveAfterResolve() {
-		testFulfilled(SENTINEL, new OnePromiseTest<Sentinel>() {
+	public void testOnRejectAfterReject() {
+		testRejected(SENTINEL, new OnePromiseTest<Dummy>() {
 			@Override
-			public void run(final Promise<Sentinel> promise, final PromiseTestHandler handler) throws Exception {
-				promise.then(new ResolveCallback<Sentinel, Void>() {
+			public void run(final Promise<Dummy> promise, final PromiseTestHandler handler)
+					throws Exception {
+				promise.then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Sentinel value) {
-						assertEquals(SENTINEL, value);
+					public Thenable<Void> onReject(final Throwable exception) {
+						assertEquals(SENTINEL, exception);
 						handler.done();
 						return null;
 					}
-				}, null);
+				});
 			}
 		});
 	}
 	
 	/**
-	 * 2.2.2.2: it must not be called before `promise` is fulfilled.
+	 * 2.2.2.2: it must not be called before `promise` is rejected.
 	 * 
-	 * Fulfilled after a delay.
+	 * Rejected after a delay.
 	 */
 	@Test
-	public void testResolvedAfterADelay() {
+	public void testRejectedAfterADelay() {
 		runTest(new PromiseTest() {
-			private volatile boolean isFulfilled = false;
+			private volatile boolean isRejected = false;
 			
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final DeferredPromiseHandler<Dummy> deferred = new DeferredPromiseHandler<>();
 				
-				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
+				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
-						assertTrue(isFulfilled);
+					public Thenable<Void> onReject(final Throwable exception) {
+						assertTrue(isRejected);
 						handler.done();
 						return null;
 					}
-				}, null);
+				});
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						deferred.resolve(new Dummy());
-						isFulfilled = true;
+						deferred.reject(new Exception());
+						isRejected = true;
 					}
 				}, 50);
 			}
@@ -74,31 +81,31 @@ public class Test222 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * 2.2.2.2: it must not be called before `promise` is fulfilled.
+	 * 2.2.2.2: it must not be called before `promise` is rejected.
 	 * 
-	 * Never fulfilled.
+	 * Never rejected.
 	 */
 	@Test
-	public void testNeverResolved() {
+	public void testNeverRejected() {
 		runTest(new PromiseTest() {
-			private volatile boolean isFulfilled = false;
+			private volatile boolean isRejected = false;
 			
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final DeferredPromiseHandler<Dummy> deferred = new DeferredPromiseHandler<>();
 				
-				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
+				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
-						isFulfilled = true;
+					public Thenable<Void> onReject(final Throwable Exception) {
+						isRejected = true;
 						return null;
 					}
-				}, null);
+				});
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						assertFalse(isFulfilled);
+						assertFalse(isRejected);
 						handler.done();
 					}
 				}, 150);
@@ -107,58 +114,58 @@ public class Test222 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * 2.2.2.3: it must not be called more than once.
+	 * 2.2.3.3: it must not be called more than once.
 	 * 
-	 * Already fulfilled.
+	 * Already rejected.
 	 */
 	@Test
-	public void testAlreadyResolved() {
+	public void testAlreadyRejected() {
 		runTest(new PromiseTest() {
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final AtomicInteger timesCalled = new AtomicInteger();
 				
-				factory.resolve(new Dummy()).then(new ResolveCallback<Dummy, Void>() {
+				factory.reject(new Exception()).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
+					public Thenable<Void> onReject(final Throwable Exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
 					}
-				}, null);
+				});
 			}
 		});
 	}
 	
 	/**
-	 * 2.2.2.3: it must not be called more than once.
+	 * 2.2.3.3: it must not be called more than once.
 	 * 
-	 * Trying to fulfill a pending promise more than once, immediately.
+	 * Trying to reject a pending promise more than once, immediately.
 	 * 
 	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
 	 * change their state.
 	 */
 	@Test
-	public void testMultiResolveImmediate() {
+	public void testMultiRejectImmediate() {
 		runTest(new PromiseTest() {
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final AtomicInteger timesCalled = new AtomicInteger();
 				final DeferredPromiseHandler<Dummy> deferred = new DeferredPromiseHandler<>();
 				
-				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
+				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
+					public Thenable<Void> onReject(final Throwable Exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
 					}
-				}, null);
+				});
 				
-				deferred.resolve(new Dummy());
+				deferred.reject(new Exception());
 				
 				try {
-					deferred.resolve(new Dummy());
+					deferred.reject(new Exception());
 					fail();
 				} catch (final IllegalStateException expected) {
 					// Do nothing
@@ -168,37 +175,37 @@ public class Test222 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * 2.2.2.3: it must not be called more than once.
+	 * 2.2.3.3: it must not be called more than once.
 	 * 
-	 * Trying to fulfill a pending promise more than once, delayed.
+	 * Trying to reject a pending promise more than once, delayed.
 	 * 
 	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
 	 * change their state.
 	 */
 	@Test
-	public void testMultiResolveDelayed() {
+	public void testMultiRejectDelayed() {
 		runTest(new PromiseTest() {
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final AtomicInteger timesCalled = new AtomicInteger();
 				final DeferredPromiseHandler<Dummy> deferred = new DeferredPromiseHandler<>();
 				
-				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
+				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
+					public Thenable<Void> onReject(final Throwable Exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
 					}
-				}, null);
+				});
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						deferred.resolve(new Dummy());
+						deferred.reject(new Exception());
 						
 						try {
-							deferred.resolve(new Dummy());
+							deferred.reject(new Exception());
 							fail();
 						} catch (final IllegalStateException expected) {
 							// Do nothing
@@ -210,37 +217,37 @@ public class Test222 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * 2.2.2.3: it must not be called more than once.
+	 * 2.2.3.3: it must not be called more than once.
 	 * 
-	 * Trying to fulfill a pending promise more than once, immediately then delayed.
+	 * Trying to reject a pending promise more than once, immediately then delayed.
 	 * 
 	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
 	 * change their state.
 	 */
 	@Test
-	public void testMultiResolveImmediateThenDelayed() {
+	public void testMultiRejectImmediateThenDelayed() {
 		runTest(new PromiseTest() {
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final AtomicInteger timesCalled = new AtomicInteger();
 				final DeferredPromiseHandler<Dummy> deferred = new DeferredPromiseHandler<>();
 				
-				factory.promise(deferred).then(new ResolveCallback<Dummy, Void>() {
+				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
+					public Thenable<Void> onReject(final Throwable Exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
 					}
-				}, null);
+				});
 				
-				deferred.resolve(new Dummy());
+				deferred.reject(new Exception());
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							deferred.resolve(new Dummy());
+							deferred.reject(new Exception());
 							fail();
 						} catch (final IllegalStateException expected) {
 							// Do nothing
@@ -267,45 +274,45 @@ public class Test222 extends AbstractPromiseTestCase {
 				final DeferredPromiseHandler<Dummy> deferred = new DeferredPromiseHandler<>();
 				final Promise<Dummy> promise = factory.promise(deferred);
 				
-				promise.then(new ResolveCallback<Dummy, Void>() {
+				promise.then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
+					public Thenable<Void> onReject(final Throwable Exception) {
 						assertEquals(1, timesCalled.get(0).incrementAndGet());
 						return null;
 					}
-				}, null);
+				});
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						promise.then(new ResolveCallback<Dummy, Void>() {
+						promise.then(null, new RejectCallback<Void>() {
 							@Override
-							public Thenable<Void> onResolve(final Dummy value) {
+							public Thenable<Void> onReject(final Throwable Exception) {
 								assertEquals(1, timesCalled.get(1).incrementAndGet());
 								return null;
 							}
-						}, null);
+						});
 					}
 				}, 50);
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						promise.then(new ResolveCallback<Dummy, Void>() {
+						promise.then(null, new RejectCallback<Void>() {
 							@Override
-							public Thenable<Void> onResolve(final Dummy value) {
+							public Thenable<Void> onReject(final Throwable Exception) {
 								assertEquals(1, timesCalled.get(2).incrementAndGet());
 								handler.done();
 								return null;
 							}
-						}, null);
+						});
 					}
 				}, 100);
 				
 				handler.setTimeout(new Runnable() {
 					@Override
 					public void run() {
-						deferred.resolve(new Dummy());
+						deferred.reject(new Exception());
 					}
 				}, 150);
 			}
@@ -313,7 +320,7 @@ public class Test222 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * When `then` is interleaved with fulfillment.
+	 * When `then` is interleaved with rejection.
 	 */
 	@Test
 	public void testThenInterleavedWithResolve() {
@@ -327,24 +334,24 @@ public class Test222 extends AbstractPromiseTestCase {
 				final DeferredPromiseHandler<Dummy> deferred = new DeferredPromiseHandler<>();
 				final Promise<Dummy> promise = factory.promise(deferred);
 				
-				promise.then(new ResolveCallback<Dummy, Void>() {
+				promise.then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
+					public Thenable<Void> onReject(final Throwable Exception) {
 						assertEquals(1, timesCalled.get(0).incrementAndGet());
 						return null;
 					}
-				}, null);
+				});
 				
-				deferred.resolve(new Dummy());
+				deferred.reject(new Exception());
 				
-				promise.then(new ResolveCallback<Dummy, Void>() {
+				promise.then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onResolve(final Dummy value) {
+					public Thenable<Void> onReject(final Throwable Exception) {
 						assertEquals(1, timesCalled.get(1).incrementAndGet());
 						handler.done();
 						return null;
 					}
-				}, null);
+				});
 			}
 		});
 	}
