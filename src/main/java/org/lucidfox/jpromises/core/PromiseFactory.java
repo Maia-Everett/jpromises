@@ -115,7 +115,7 @@ public class PromiseFactory {
 	 * @param thenable the thenable
 	 * @return the promise
 	 */
-	public final <V> Promise<V> resolve(final Thenable<? extends V> thenable) {
+	public final <V> Promise<V> deferredResolve(final Thenable<? extends V> thenable) {
 		if (thenable instanceof Promise) {
 			// Short-circuit
 			@SuppressWarnings("unchecked")
