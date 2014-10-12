@@ -32,7 +32,9 @@ dependencies {
 }
 
 test {
-    
+	testLogging {
+		events 'passed', 'skipped', 'failed'
+	}
 }
 
 javadoc {

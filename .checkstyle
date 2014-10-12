@@ -4,7 +4,13 @@
   <local-check-config name="Main" location="checkstyle.xml" type="project" description="">
     <additional-data name="protect-config-file" value="false"/>
   </local-check-config>
-  <fileset name="all" enabled="true" check-config-name="Main" local="true">
-    <file-match-pattern match-pattern="." include-pattern="true"/>
+  <local-check-config name="Test" location="test-checkstyle.xml" type="project" description="">
+    <additional-data name="protect-config-file" value="false"/>
+  </local-check-config>
+  <fileset name="src/main/java" enabled="true" check-config-name="Main" local="true">
+    <file-match-pattern match-pattern="src/main/java" include-pattern="true"/>
+  </fileset>
+  <fileset name="src/test/java" enabled="true" check-config-name="Test" local="true">
+    <file-match-pattern match-pattern="src/test/java" include-pattern="true"/>
   </fileset>
 </fileset-config>

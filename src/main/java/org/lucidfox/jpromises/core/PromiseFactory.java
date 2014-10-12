@@ -126,19 +126,7 @@ public class PromiseFactory {
 		return promise(new PromiseHandler<V>() {
 			@Override
 			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
-				thenable.then(new ResolveCallback<V, Void>() {
-					@Override
-					public Promise<Void> onResolve(final V value) {
-						resolve.resolve(value);
-						return null;
-					}
-				}, new RejectCallback<Void>() {
-					@Override
-					public Promise<Void> onReject(final Throwable exception) {
-						reject.reject(exception);
-						return null;
-					}
-				});
+				resolve.deferResolve(thenable);
 			}
 		});
 	}

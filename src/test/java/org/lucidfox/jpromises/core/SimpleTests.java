@@ -28,7 +28,7 @@ public class SimpleTests extends AbstractPromiseTestCase {
 	public void testSimplePromise() {
 		runTest(new PromiseTest() {
 			@Override
-			public void run(final PromiseFactory factory, final PromiseTestEnder ender) throws Exception {
+			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				factory.promise(new PromiseHandler<String>() {
 					@Override
 					public void handle(final Resolver<String> resolve, final Rejector reject) {
@@ -38,7 +38,7 @@ public class SimpleTests extends AbstractPromiseTestCase {
 					@Override
 					public Promise<Void> onResolve(final String value) {
 						System.out.println("testSimplePromise: " + value);
-						ender.end();
+						handler.done();
 						return null;
 					}
 				}, null);
@@ -50,7 +50,7 @@ public class SimpleTests extends AbstractPromiseTestCase {
 	public void testTwoThens() throws InterruptedException {
 		runTest(new PromiseTest() {
 			@Override
-			public void run(final PromiseFactory factory, final PromiseTestEnder ender) throws Exception {
+			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				factory.promise(new PromiseHandler<String>() {
 					@Override
 					public void handle(final Resolver<String> resolve, final Rejector reject) {
@@ -67,7 +67,7 @@ public class SimpleTests extends AbstractPromiseTestCase {
 					@Override
 					public Promise<Void> onResolve(final String value) {
 						System.out.println("testTwoThens: In second then");
-						ender.end();
+						handler.done();
 						return null;
 					}
 				}, null);
