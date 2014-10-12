@@ -1,6 +1,11 @@
-package org.lucidfox.jpromises.core;
+package org.lucidfox.jpromises.core.helpers;
 
-class DeferredPromiseHandler<V> implements PromiseHandler<V>, Resolver<V>, Rejector {
+import org.lucidfox.jpromises.core.PromiseHandler;
+import org.lucidfox.jpromises.core.Rejector;
+import org.lucidfox.jpromises.core.Resolver;
+import org.lucidfox.jpromises.core.Thenable;
+
+public class DeferredPromiseHandler<V> implements PromiseHandler<V>, Resolver<V>, Rejector {
 	private Resolver<V> resolver;
 	private Rejector rejector;
 	

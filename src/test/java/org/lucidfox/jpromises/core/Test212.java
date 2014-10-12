@@ -3,6 +3,8 @@ package org.lucidfox.jpromises.core;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
+import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 
 @JsAnalogue("2.1.2.js")
 public class Test212 extends AbstractPromiseTestCase {
@@ -20,7 +22,8 @@ public class Test212 extends AbstractPromiseTestCase {
 			private volatile boolean onFulfilledCalled;
 			
 			@Override
-			public void run(final Promise<Dummy> promise, final PromiseTestHandler handler) throws Exception {
+			public void run(final PromiseFactory factory, final Promise<Dummy> promise,
+					final PromiseTestHandler handler) throws Exception {
 				promise.then(new ResolveCallback<Dummy, Void>() {
 					@Override
 					public Thenable<Void> onResolve(final Dummy value) {

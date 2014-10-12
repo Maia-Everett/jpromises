@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
+import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 
 /**
  * 2.2.2: If {@code onFulfilled} is a function...
@@ -26,7 +28,8 @@ public class Test222 extends AbstractPromiseTestCase {
 	public void testOnResolveAfterResolve() {
 		testFulfilled(SENTINEL, new OnePromiseTest<Sentinel>() {
 			@Override
-			public void run(final Promise<Sentinel> promise, final PromiseTestHandler handler) throws Exception {
+			public void run(final PromiseFactory factory, final Promise<Sentinel> promise,
+					final PromiseTestHandler handler) throws Exception {
 				promise.then(new ResolveCallback<Sentinel, Void>() {
 					@Override
 					public Thenable<Void> onResolve(final Sentinel value) {

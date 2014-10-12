@@ -1,4 +1,4 @@
-package org.lucidfox.jpromises.core;
+package org.lucidfox.jpromises.core.helpers;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
+import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 
 /**
  * 2.2.3: If {@code onRejected} is a function...
@@ -32,8 +34,8 @@ public class Test223 extends AbstractPromiseTestCase {
 	public void testOnRejectAfterReject() {
 		testRejected(SENTINEL, new OnePromiseTest<Dummy>() {
 			@Override
-			public void run(final Promise<Dummy> promise, final PromiseTestHandler handler)
-					throws Exception {
+			public void run(final PromiseFactory factory, final Promise<Dummy> promise,
+					final PromiseTestHandler handler) throws Exception {
 				promise.then(null, new RejectCallback<Void>() {
 					@Override
 					public Thenable<Void> onReject(final Throwable exception) {
@@ -96,7 +98,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						isRejected = true;
 						return null;
 					}
@@ -127,7 +129,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				factory.reject(new Exception()).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
@@ -155,7 +157,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
@@ -192,7 +194,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
@@ -234,7 +236,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				factory.promise(deferred).then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						assertEquals(1, timesCalled.incrementAndGet());
 						handler.done();
 						return null;
@@ -276,7 +278,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				promise.then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						assertEquals(1, timesCalled.get(0).incrementAndGet());
 						return null;
 					}
@@ -287,7 +289,7 @@ public class Test223 extends AbstractPromiseTestCase {
 					public void run() {
 						promise.then(null, new RejectCallback<Void>() {
 							@Override
-							public Thenable<Void> onReject(final Throwable Exception) {
+							public Thenable<Void> onReject(final Throwable exception) {
 								assertEquals(1, timesCalled.get(1).incrementAndGet());
 								return null;
 							}
@@ -300,7 +302,7 @@ public class Test223 extends AbstractPromiseTestCase {
 					public void run() {
 						promise.then(null, new RejectCallback<Void>() {
 							@Override
-							public Thenable<Void> onReject(final Throwable Exception) {
+							public Thenable<Void> onReject(final Throwable exception) {
 								assertEquals(1, timesCalled.get(2).incrementAndGet());
 								handler.done();
 								return null;
@@ -336,7 +338,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				promise.then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						assertEquals(1, timesCalled.get(0).incrementAndGet());
 						return null;
 					}
@@ -346,7 +348,7 @@ public class Test223 extends AbstractPromiseTestCase {
 				
 				promise.then(null, new RejectCallback<Void>() {
 					@Override
-					public Thenable<Void> onReject(final Throwable Exception) {
+					public Thenable<Void> onReject(final Throwable exception) {
 						assertEquals(1, timesCalled.get(1).incrementAndGet());
 						handler.done();
 						return null;

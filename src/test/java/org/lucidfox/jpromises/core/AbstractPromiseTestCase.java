@@ -8,6 +8,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
+import org.lucidfox.jpromises.core.helpers.JsAnalogue;
+
 /**
  * Abstract base class setting up some plumbing for JPromises test cases.
  */
@@ -39,7 +42,7 @@ abstract class AbstractPromiseTestCase {
 	}
 	
 	protected interface OnePromiseTest<V> {
-		void run(Promise<V> promise, PromiseTestHandler handler) throws Exception;
+		void run(PromiseFactory factory, Promise<V> promise, PromiseTestHandler handler) throws Exception;
 	}
 	
 	protected final void runTest(final PromiseTest test) {
@@ -126,7 +129,7 @@ abstract class AbstractPromiseTestCase {
 		runTest(new PromiseTest() {
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
-				test.run(factory.resolve(value), handler);
+				test.run(factory, factory.resolve(value), handler);
 			}
 		});
 		
@@ -136,7 +139,7 @@ abstract class AbstractPromiseTestCase {
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final DeferredPromiseHandler<V> deferred = new DeferredPromiseHandler<V>();
 				final Promise<V> promise = factory.promise(deferred);
-				test.run(promise, handler);
+				test.run(factory, promise, handler);
 				deferred.resolve(value);
 			}
 		});
@@ -147,7 +150,7 @@ abstract class AbstractPromiseTestCase {
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final DeferredPromiseHandler<V> deferred = new DeferredPromiseHandler<V>();
 				final Promise<V> promise = factory.promise(deferred);
-				test.run(promise, handler);
+				test.run(factory, promise, handler);
 				
 				handler.setTimeout(new Runnable() {
 					@Override
@@ -165,7 +168,7 @@ abstract class AbstractPromiseTestCase {
 		runTest(new PromiseTest() {
 			@Override
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
-				test.run(factory.<V>reject(exception), handler);
+				test.run(factory, factory.<V>reject(exception), handler);
 			}
 		});
 		
@@ -175,7 +178,7 @@ abstract class AbstractPromiseTestCase {
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final DeferredPromiseHandler<V> deferred = new DeferredPromiseHandler<V>();
 				final Promise<V> promise = factory.promise(deferred);
-				test.run(promise, handler);
+				test.run(factory, promise, handler);
 				deferred.reject(exception);
 			}
 		});
@@ -186,7 +189,7 @@ abstract class AbstractPromiseTestCase {
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				final DeferredPromiseHandler<V> deferred = new DeferredPromiseHandler<V>();
 				final Promise<V> promise = factory.promise(deferred);
-				test.run(promise, handler);
+				test.run(factory, promise, handler);
 				
 				handler.setTimeout(new Runnable() {
 					@Override

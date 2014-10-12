@@ -34,5 +34,5 @@ public interface ResolveCallback<V, R> {
 	 * @param value the value with which the promise is resolved
 	 * @return the promise (thenable) to be chained after the current promise is resolved (optional)
 	 */
-	Thenable<R> onResolve(V value);
+	Thenable<R> onResolve(V value) throws Exception;
 }

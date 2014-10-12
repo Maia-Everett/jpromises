@@ -1,6 +1,7 @@
 package org.lucidfox.jpromises.core;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 
 /**
  * 2.2.1: Both {@code onFulfilled} and {@code onRejected} are optional arguments.

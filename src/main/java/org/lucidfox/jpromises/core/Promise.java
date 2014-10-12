@@ -203,26 +203,37 @@ public final class Promise<V> implements Thenable<V> {
 		while (!deferreds.isEmpty()) {
 			@SuppressWarnings("unchecked")
 			final Deferred<V, R> deferred = (Deferred<V, R>) deferreds.remove();
-			final Thenable<R> next;
+			Thenable<R> next = null;
+			Throwable exceptionInCallback = null;
 			
 			if (state == State.RESOLVED) {
 				if (deferred.resolveCallback == null) {
 					next = null;
 				} else {
-					next = deferred.resolveCallback.onResolve(resolvedValue);
+					try {
+						next = deferred.resolveCallback.onResolve(resolvedValue);
+					} catch (final Exception e) {
+						exceptionInCallback = e;
+					}
 				}
 			} else if (state == State.REJECTED) {
 				if (deferred.rejectCallback == null) {
 					next = null;
 				} else {
-					next = deferred.rejectCallback.onReject(rejectedException);
+					try {
+						next = deferred.rejectCallback.onReject(rejectedException);
+					} catch (final Exception e) {
+						exceptionInCallback = e;
+					}
 				}
 			} else {
 				throw new AssertionError(); // Cannot be called from a PENDING state
 			}
 			
 			if (next == null) {
-				if (state == State.RESOLVED) {
+				if (exceptionInCallback != null) {
+					deferred.thenRejector.reject(exceptionInCallback);
+				} else if (state == State.RESOLVED) {
 					deferred.thenResolver.resolve(null);
 				} else {
 					deferred.thenRejector.reject(rejectedException);

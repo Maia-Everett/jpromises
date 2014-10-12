@@ -33,5 +33,5 @@ public interface RejectCallback<R> {
 	 * @param exception the exception with which the promise was rejected
 	 * @return the promise (thenable) to be chained after the current promise is rejected (optional)
 	 */
-	Thenable<R> onReject(Throwable exception);
+	Thenable<R> onReject(Throwable exception) throws Exception;
 }

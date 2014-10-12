@@ -3,6 +3,8 @@ package org.lucidfox.jpromises.core;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
+import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 
 /**
  * 2.2.4: `onFulfilled` or `onRejected` must not be called until the execution context stack contains only 
@@ -21,8 +23,8 @@ public class Test224 extends AbstractPromiseTestCase {
 			private volatile boolean thenHasReturned = false;
 			
 			@Override
-			public void run(final Promise<Dummy> promise, final PromiseTestHandler handler)
-					throws Exception {
+			public void run(final PromiseFactory factory, final Promise<Dummy> promise,
+					final PromiseTestHandler handler) throws Exception {
 				promise.then(new ResolveCallback<Dummy, Void>() {
 					@Override
 					public Thenable<Void> onResolve(final Dummy value) {
@@ -40,8 +42,8 @@ public class Test224 extends AbstractPromiseTestCase {
 			private volatile boolean thenHasReturned = false;
 			
 			@Override
-			public void run(final Promise<Dummy> promise, final PromiseTestHandler handler)
-					throws Exception {
+			public void run(final PromiseFactory factory, final Promise<Dummy> promise,
+					final PromiseTestHandler handler) throws Exception {
 				promise.then(null, new RejectCallback<Void>() {
 					@Override
 					public Thenable<Void> onReject(final Throwable exception) {
