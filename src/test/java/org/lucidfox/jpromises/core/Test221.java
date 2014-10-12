@@ -81,10 +81,9 @@ public class Test221 extends AbstractPromiseTestCase {
 	}
 	
 	/**
-	 * Trying to reject immediately then fulfill delayed.
+	 * 2.2.1.2: If `onRejected` is not a function, it must be ignored.
 	 * 
-	 * Note: Unlike in the Promises/A+ specification, JPromises promises throw an exception when trying to
-	 * change their state.
+	 * Applied to a promise fulfilled and then chained off of.
 	 */
 	@Test
 	public void testOnResolveNullThenOnRejectNull() {
