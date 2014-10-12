@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 /**
- * 2.2.2: If {@code onRejected} is a function...
+ * 2.2.3: If {@code onRejected} is a function...
  */
 @JsAnalogue("2.2.3.js")
 public class Test223 extends AbstractPromiseTestCase {
