@@ -22,8 +22,13 @@
 package org.lucidfox.jpromises.core;
 
 /**
+ * <p>
  * A helper interface used when initializing a promise with a {@link PromiseHandler}, to allow the promise handler
  * to reject the promise with an exception, indicating that an error occurred while evaluating the promise's value.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by library users.
+ * </p>
  */
 public interface Rejector {
 	/**

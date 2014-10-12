@@ -22,8 +22,13 @@
 package org.lucidfox.jpromises.core;
 
 /**
+ * <p>
  * A helper interface used when initializing a promise with a {@link PromiseHandler}, to allow the promise handler
  * to resolve the promise to a specific value.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by library users.
+ * </p>
  *
  * @param <V> the value type
  */
