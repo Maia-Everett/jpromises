@@ -28,7 +28,7 @@ package org.lucidfox.jpromises.core;
  * <p>
  * You will rarely implement this interface yourself. It is mostly provided for writing adapters to other
  * promise libraries. A {@link Thenable} can be wrapped into a {@link Promise} using
- * {@link PromiseFactory#deferredResolve(Thenable)}.
+ * {@link PromiseFactory#deferResolve(Thenable)}.
  * </p>
  *
  * @param <V> the value type
