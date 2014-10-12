@@ -35,4 +35,12 @@ public interface Resolver<V> {
 	 * @throws IllegalStateException if the promise is already resolved or rejected
 	 */
 	void resolve(V value);
+	
+	/**
+	 * Defers resolution of the promise to the completion of the given {@link Thenable}.
+	 *
+	 * @param thenable the thenable that must be resolved first to resolve promise's new value
+	 * @throws IllegalStateException if the promise is already resolved or rejected
+	 */
+	void deferResolve(Thenable<? extends V> thenable);
 }

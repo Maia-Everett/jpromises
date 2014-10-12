@@ -81,16 +81,17 @@ public final class Promise<V> implements Thenable<V> {
 			handler.handle(new Resolver<V>() {
 				@Override
 				public void resolve(final V value) {
-					synchronized (lock) {
-						Promise.this.resolve(value);
-					}
+					Promise.this.resolve(value);
+				}
+
+				@Override
+				public void deferResolve(final Thenable<? extends V> thenable) {
+					Promise.this.deferResolve(thenable);
 				}
 			}, new Rejector() {
 				@Override
 				public void reject(final Throwable exception) {
-					synchronized (lock) {
-						Promise.this.reject(exception);
-					}
+					Promise.this.reject(exception);
 				}
 			});
 		} catch (final Exception e) {
@@ -110,33 +111,40 @@ public final class Promise<V> implements Thenable<V> {
 				throw new IllegalStateException("A promise cannot be resolved with itself.");
 			}
 			
+			state = State.RESOLVED;
+			resolvedValue = value;
+			processDeferred();
+		}
+	}
+	
+	private void deferResolve(final Thenable<? extends V> thenable) {
+		synchronized (lock) {
+			if (state != State.PENDING) {
+				throw new IllegalStateException("Promise state already defined.");
+			}
+			
+			if (thenable == this) {
+				throw new IllegalStateException("A promise cannot be resolved with itself.");
+			}
+			
 			// Promise Resolution Procedure:
 			// https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
-			if (value instanceof Thenable) {
-				@SuppressWarnings("unchecked")
-				final Thenable<V> thenable = (Thenable<V>) value;
-				
-				try {
-					thenable.then(new ResolveCallback<V, Object>() {
-						@Override
-						public Promise<Object> onResolve(final V value) {
-							resolve(value);
-							return null;
-						}
-					}, new RejectCallback<Object>() {
-						@Override
-						public Promise<Object> onReject(final Throwable exception) {
-							reject(exception);
-							return null;
-						}
-					});
-				} catch (final Exception e) {
-					reject(e);
-				}
-			} else {
-				state = State.RESOLVED;
-				resolvedValue = value;
-				processDeferred();
+			try {
+				thenable.then(new ResolveCallback<V, Object>() {
+					@Override
+					public Promise<Object> onResolve(final V value) {
+						resolve(value);
+						return null;
+					}
+				}, new RejectCallback<Object>() {
+					@Override
+					public Promise<Object> onReject(final Throwable exception) {
+						reject(exception);
+						return null;
+					}
+				});
+			} catch (final Exception e) {
+				reject(e);
 			}
 		}
 	}
