@@ -148,6 +148,35 @@ public class PromiseFactory {
 	}
 	
 	/**
+	 * Performs the equivalent of the monadic "join" operation on a thenable that resolves to a thenable,
+	 * converting it into a promise that resolves to the value of the inner thenable.
+	 * 
+	 * @param <V> the value type of the inner and returned promise
+	 * @param layeredThenable the thenable with two levels of wrapping
+	 * @return the "flattened" promise with only one level of wrapping
+	 */
+	public final <V> Promise<V> flatten(final Thenable<? extends Thenable<? extends V>> layeredThenable) {
+		return promise(new PromiseHandler<V>() {
+			@Override
+			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
+				layeredThenable.then(new ResolveCallback<Thenable<? extends V>, V>() {
+					@Override
+					public Thenable<V> onResolve(Thenable<? extends V> returnedThenable) throws Exception {
+						resolve.deferResolve(returnedThenable);
+						return null;
+					}
+				}, new RejectCallback<V>() {
+					@Override
+					public Thenable<V> onReject(final Throwable exception) throws Exception {
+						reject.reject(exception);
+						return null;
+					}
+				});
+			}
+		});
+	}
+	
+	/**
 	 * Returns a {@code Promise} that wraps multiple thenables or promises. The returned promise is resolved when all
 	 * thenables are resolved, or rejected when at least one thenable is rejected. The returned promise's value is
 	 * a list containing the results of the thenables passed to the method, in the order passed.

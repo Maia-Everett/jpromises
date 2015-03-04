@@ -3,7 +3,7 @@
 The JPromises library is a *mostly* compliant implementation of the
 [JavaScript Promises/A+ specification](http://promisesaplus.com/) in Java.
 It is designed to be compatible with AWT and GWT, and potentially with any kind of event dispatch mechanism.
-Its main goal is to eliminate "callback hell" 
+Its main goal is to eliminate "callback hell" that arises with code heavily involving Node/GWT style async callbacks.
 
 ## Why not [JDeferred](http://jdeferred.org)?
 
