@@ -31,7 +31,7 @@ import org.lucidfox.jpromises.core.PromiseFactory;
 /**
  * <p>
  * A {@link PromiseFactory} specialized for JavaFX. This factory's {@link DeferredInvoker} executes tasks
- * on the AWT event queue in the event dispatch thread, using {@code Platform.invokeLater}.
+ * on the JavaFX event queue, using {@code Platform.invokeLater}.
  * </p>
  * <p>
  * If JavaFX is not available (such as on early Java 7 builds, or Linux OpenJDK without OpenJFX), this class will fail
