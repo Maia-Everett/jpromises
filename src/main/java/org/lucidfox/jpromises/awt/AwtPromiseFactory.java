@@ -31,7 +31,7 @@ import org.lucidfox.jpromises.core.PromiseFactory;
  * A {@link PromiseFactory} specialized for AWT and Swing. This factory's {@link DeferredInvoker} executes tasks
  * on the AWT event queue in the event dispatch thread, using {@link EventQueue#invokeLater}.
  */
-@GwtIncompatible("Depends on AWT")
+@GwtIncompatible("java.awt.EventQueue")
 public class AwtPromiseFactory extends PromiseFactory {
 	/**
 	 * Instantiates a new AWT promise factory.

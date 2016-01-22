@@ -38,7 +38,7 @@ import org.lucidfox.jpromises.core.PromiseFactory;
  * to instantiate at runtime.
  * </p>
  */
-@GwtIncompatible("Depends on JavaFX")
+@GwtIncompatible("javafx.application.Platform")
 public class JavaFXPromiseFactory extends PromiseFactory {
 	/**
 	 * Instantiates a new AWT promise factory.
