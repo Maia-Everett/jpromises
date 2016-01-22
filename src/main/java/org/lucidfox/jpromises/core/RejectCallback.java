@@ -27,11 +27,13 @@ package org.lucidfox.jpromises.core;
  * @param <R> the value type of the returned promise for chaining
  */
 public interface RejectCallback<R> {
+	
 	/**
 	 * Called when the promise (thenable) is rejected.
 	 *
 	 * @param exception the exception with which the promise was rejected
 	 * @return the promise (thenable) to be chained after the current promise is rejected (optional)
+	 * @throws Exception Signals that an error occurred when handling the exception.
 	 */
 	Thenable<R> onReject(Throwable exception) throws Exception;
 }

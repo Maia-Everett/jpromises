@@ -28,11 +28,13 @@ package org.lucidfox.jpromises.core;
  * @param <R> the value type of the returned promise for chaining
  */
 public interface ResolveCallback<V, R> {
+	
 	/**
 	 * Called when the promise (thenable) is resolved.
 	 *
 	 * @param value the value with which the promise is resolved
 	 * @return the promise (thenable) to be chained after the current promise is resolved (optional)
+	 * @throws Exception Signals that an error occurred when handling the result of the promise execution.
 	 */
 	Thenable<R> onResolve(V value) throws Exception;
 }
