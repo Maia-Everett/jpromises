@@ -77,7 +77,7 @@ public class PromiseFactory {
 	 * @param <V> the value type of the promise
 	 * @return the promise resolved to null
 	 */
-	public final <V> Promise<V> nil() {
+	public final <V> Promise<V> ofNull() {
 		return resolve(null);
 	}
 	
