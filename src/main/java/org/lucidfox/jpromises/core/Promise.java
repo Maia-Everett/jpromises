@@ -260,6 +260,33 @@ public final class Promise<V> implements Thenable<V> {
 		}
 	}
 	
+	/**
+	 * <p>Returns the string representation of this promise.</p>
+	 * 
+	 * <p>It is only intended for debugging purposes, so the format is not fixed. However, the following may be
+	 * regarded as typical:</p>
+	 * 
+	 * <ul>
+	 * <li>{@code Promise (pending)}</li>
+	 * <li>{@code Promise (resolved, value = 1970-01-01T00:00:00Z)}</li>
+	 * <li>{@code Promise (rejected, exception = java.lang.ArithmeticException: / by zero)}</li>
+	 * </ul>
+	 */
+	@Override
+	public String toString() {
+		switch (state) {
+		case PENDING:
+			return "Promise (pending)";
+		case RESOLVED:
+			return "Promise (resolved, value = " + resolvedValue + ")";
+		case REJECTED:
+			return "Promise (rejected, value = " + rejectedException + ")";
+		default:
+			// Cannot happen
+			throw new AssertionError();
+		}
+	}
+	
 	private static class Deferred<V, R> {
 		private ResolveCallback<? super V, R> resolveCallback;
 		private RejectCallback<R> rejectCallback;

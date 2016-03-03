@@ -38,6 +38,8 @@ import java.lang.annotation.Target;
 public @interface GwtIncompatible {
 	/**
 	 * An attribute that can be used to explain why the code is incompatible.
+	 * 
+	 * @return reason for incompatibility
 	 */
 	String value();
 }

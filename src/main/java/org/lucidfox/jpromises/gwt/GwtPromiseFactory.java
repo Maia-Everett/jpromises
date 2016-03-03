@@ -50,4 +50,12 @@ public class GwtPromiseFactory extends PromiseFactory {
 			}
 		});
 	}
+	
+	/**
+	 * Returns the string {@code "GwtPromiseFactory"}.
+	 */
+	@Override
+	public String toString() {
+		return "GwtPromiseFactory";
+	}
 }

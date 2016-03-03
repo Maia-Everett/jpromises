@@ -44,4 +44,12 @@ public class AwtPromiseFactory extends PromiseFactory {
 			}
 		});
 	}
+	
+	/**
+	 * Returns the string {@code "AwtPromiseFactory"}.
+	 */
+	@Override
+	public String toString() {
+		return "AwtPromiseFactory";
+	}
 }

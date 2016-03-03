@@ -161,7 +161,7 @@ public class PromiseFactory {
 			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
 				layeredThenable.then(new ResolveCallback<Thenable<? extends V>, V>() {
 					@Override
-					public Thenable<V> onResolve(Thenable<? extends V> returnedThenable) throws Exception {
+					public Thenable<V> onResolve(final Thenable<? extends V> returnedThenable) throws Exception {
 						resolve.deferResolve(returnedThenable);
 						return null;
 					}
@@ -314,5 +314,14 @@ public class PromiseFactory {
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Returns the string representation of this promise factory, which includes the string representation of
+	 * the deferred invoker. Subclasses are encouraged to override this method.
+	 */
+	@Override
+	public String toString() {
+		return "PromiseFactory (deferredInvoker = " + deferredInvoker + ")";
 	}
 }

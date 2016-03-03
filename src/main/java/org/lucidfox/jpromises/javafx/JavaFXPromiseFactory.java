@@ -49,7 +49,7 @@ public class JavaFXPromiseFactory extends PromiseFactory {
 		super(new JavaFXDeferredInvoker());
 	}
 	
-	private static class JavaFXDeferredInvoker implements DeferredInvoker {
+	private static final class JavaFXDeferredInvoker implements DeferredInvoker {
 		private final Method platformRunLater;
 		
 		private JavaFXDeferredInvoker() {
@@ -61,7 +61,7 @@ public class JavaFXPromiseFactory extends PromiseFactory {
 		}
 
 		@Override
-		public void invokeDeferred(Runnable task) {
+		public void invokeDeferred(final Runnable task) {
 			try {
 				platformRunLater.invoke(null, task);
 			} catch (final IllegalAccessException | IllegalArgumentException e) {
@@ -70,5 +70,13 @@ public class JavaFXPromiseFactory extends PromiseFactory {
 				throw new RuntimeException(e.getCause());
 			}
 		}
+	}
+	
+	/**
+	 * Returns the string {@code "JavaFXPromiseFactory"}.
+	 */
+	@Override
+	public String toString() {
+		return "JavaFXPromiseFactory";
 	}
 }
