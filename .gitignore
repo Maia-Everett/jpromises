@@ -6,3 +6,8 @@
 /gradlew
 /gradlew.bat
 /jpromises.iml
+/.classpath
+/.project
+/.settings
+/.directory
+/.checkstyle
