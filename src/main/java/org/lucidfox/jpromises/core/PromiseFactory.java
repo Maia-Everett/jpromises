@@ -211,11 +211,18 @@ public class PromiseFactory {
 					remaining = thenables.size();
 					
 					final List<V> result = new ArrayList<>(remaining);
-					int i = 0;
+					
+					// Need a short-circuit here; there will be no resolve() calls in the loop for 0 items
+					if (remaining == 0) {
+						resolve.resolve(result);
+						return;
+					}
+					
+					int nextIndex = 0;
 					
 					for (final Thenable<? extends V> thenable: thenables) {
-						final int index = i;
-						i++;
+						final int index = nextIndex;
+						nextIndex++;
 						result.add(null);
 						
 						thenable.then(new ResolveCallback<V, Void>() {
@@ -227,7 +234,7 @@ public class PromiseFactory {
 										result.set(index, value);
 										
 										if (remaining == 0) {
-											resolve(result);
+											resolve.resolve(result);
 										}
 									}
 									
@@ -239,7 +246,7 @@ public class PromiseFactory {
 							public Promise<Void> onReject(final Throwable exception) {
 								synchronized (lock) {
 									remaining = 0;
-									reject(exception);
+									reject.reject(exception);
 									return null;
 								}
 							}
