@@ -53,7 +53,7 @@ public interface Thenable<V> {
 	 * @param <R> the type of the result promise
 	 * @param onResolve the resolve callback (optional)
 	 * @param onReject the reject callback (optional)
-	 * @return (optionally) a {@link Thenable} that is chained after the current thenable
+	 * @return a {@link Thenable} that is chained after the current thenable
 	 * @throws Exception Optionally, {@link Thenable} can throw exceptions, though its main implementation,
 	 * 			{@link Promise}, does not. The {@link Promise} class treats thrown exceptions as rejection.
 	 */
