@@ -318,13 +318,13 @@ public final class Promise<V> implements Thenable<V> {
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
 	public Promise<Void> then(final VoidResolveCallback<? super V> onResolve, final VoidRejectCallback onReject) {
-		return then(new ResolveCallback<V, Void>() {
+		return then(onResolve == null ? null : new ResolveCallback<V, Void>() {
 			@Override
 			public Thenable<Void> onResolve(final V value) throws Exception {
 				onResolve.onResolve(value);
 				return null;
 			}
-		}, new RejectCallback<Void>() {
+		}, onReject == null ? null : new RejectCallback<Void>() {
 			@Override
 			public Thenable<Void> onReject(final Throwable exception) throws Exception {
 				onReject.onReject(exception);
