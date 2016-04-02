@@ -1,9 +1,14 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.7
 group = 'org.lucidfox.jpromises'
 version = '0.1'
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.12'
+}
 
 sourceSets {
 	main {
@@ -26,18 +31,18 @@ sourceSets {
 }
 
 jar {
-    manifest {
-        attributes 'Implementation-Title': 'JPromises', 'Implementation-Version': version
-    }
+	manifest {
+		attributes 'Implementation-Title': 'JPromises', 'Implementation-Version': version
+	}
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    compile group: 'com.google.gwt', name: 'gwt-user', version: '2.+'
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+	compileOnly group: 'com.google.gwt', name: 'gwt-user', version: '2.7.0'
+	testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
 test {
@@ -83,9 +88,44 @@ artifacts {
 }
 
 uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
+	repositories {
+	   mavenDeployer {
+			repository(url: 'file:///home/maia/workspace/promises/jpromises/build/repo/')
+			
+			addFilter('default') {artifact, file ->
+                artifact.name == "${project.name}"
+            }
+			
+			addFilter('gwt') {artifact, file ->
+                artifact.name == "${project.name}-gwt"
+            }
+		   
+			pom('default').project {
+				licenses {
+					license {
+						name 'MIT License'
+						url 'http://www.opensource.org/licenses/mit-license.php'
+						distribution 'repo'
+					}
+				}
+			}
+			
+			pom('gwt').model.licenses = pom('default').model.licenses
+
+        	pom('gwt').withXml {
+        		// ugh, ugly
+            	def dependency = asNode().get('dependencies')[0].appendNode('dependency')
+            	dependency.appendNode('groupId', 'com.google.gwt')
+      			dependency.appendNode('artifactId', 'gwt-user')
+      			dependency.appendNode('version', '2.7.0')
+      			dependency.appendNode('scope', 'provided')
+      			
+      			dependency = asNode().get('dependencies')[0].appendNode('dependency')
+            	dependency.appendNode('groupId', "${project.group}")
+      			dependency.appendNode('artifactId', "${project.name}")
+      			dependency.appendNode('version', "${project.version}")
+      			dependency.appendNode('scope', 'compile')
+        	}
+		}
+	}
 }
