@@ -1,20 +1,29 @@
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	
-	dependencies {
-		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.9.0'
-	}
-}
-
-apply plugin: 'license'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
 sourceCompatibility = 1.7
 group = 'org.lucidfox.jpromises'
 version = '0.1'
+
+sourceSets {
+	main {
+		resources {
+			exclude '**/.keep'
+		}
+	}
+
+	gwt {
+		java {
+			srcDir 'src/main/java'
+		}
+		
+		resources {
+			srcDir 'src/main/resources'
+			srcDir 'src/main/gwt'
+			exclude '**/.keep'
+		}
+	}
+}
 
 jar {
     manifest {
@@ -37,7 +46,7 @@ test {
 	}
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourcesJar(type: Jar) {
 	classifier = 'sources'
 	from sourceSets.main.allSource
 }
@@ -47,9 +56,30 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 	from javadoc.destinationDir
 }
 
+task gwtJar(type: Jar) {
+	baseName = "${project.name}-gwt"
+	from sourceSets.gwt.allSource
+}
+
+task gwtJavadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	baseName = "${project.name}-gwt"
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+task gwtSourcesJar(type: Jar) {
+	classifier = 'sources'
+	baseName = "${project.name}-gwt"
+	from sourceSets.gwt.allSource
+}
+
 artifacts {
 	archives sourcesJar
 	archives javadocJar
+	archives gwtJar
+	archives gwtJavadocJar
+	archives gwtSourcesJar
 }
 
 uploadArchives {
