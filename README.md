@@ -7,11 +7,10 @@ Its main goal is to eliminate "callback hell" that arises with code heavily invo
 
 * [Javadoc](http://jpromises.lucidfox.org/javadoc/)
 
-## Why not [JDeferred](http://jdeferred.org)?
+## Advantages
 
-By all means, JDeferred is the more mature and feature complete library. However, this library was written with
-the explicit purpose of having a portable promises library in a complex project with GWT and Swing frontends.
-It is designed with the following goals:
+This library was written with the explicit purpose of having a portable promises library in a complex project with GWT
+and Swing frontends. It is designed with the following goals:
 
 1. Minimal required dependencies (only the JDK itself)
 2. Compatibility with GWT

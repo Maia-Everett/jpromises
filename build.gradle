@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = 1.7
 group = 'org.lucidfox.jpromises'
@@ -87,9 +88,15 @@ artifacts {
 	archives gwtSourcesJar
 }
 
+signing {
+    sign configurations.archives
+}
+
 uploadArchives {
 	repositories {
 	   mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+			
 			repository(url: 'file:///home/maia/workspace/promises/jpromises/build/repo/')
 			
 			addFilter('default') {artifact, file ->
@@ -108,9 +115,37 @@ uploadArchives {
 						distribution 'repo'
 					}
 				}
+				
+				developers {
+					developer {
+						name 'Maia Everett'
+						email 'maia@lucidfox.org'
+						url 'http://lucidfox.org'
+					}
+				}
+				
+				scm {
+					url 'https://github.com/lucidfox/jpromises'
+					connection 'https://github.com/lucidfox/jpromises.git'
+					developerConnection 'git@github.com:lucidfox/jpromises.git'
+				}
+				
+				name 'Java Library for Promises'
+				description 'An implementation of Promises in Java based on the JavaScript Promises/A+ specification,' +
+					' with adapters for AWT and GWT.'
+				url 'https://github.com/lucidfox/jpromises'
+			}
+		   
+			pom('gwt').project {
+				name 'Java Library for Promises - GWT module'
+				description 'An implementation of Promises in Java based on the JavaScript Promises/A+ specification,' +
+					' with adapters for AWT and GWT. This artifact contains a GWT module with packaged sources.'
+				url 'https://github.com/lucidfox/jpromises'
 			}
 			
 			pom('gwt').model.licenses = pom('default').model.licenses
+			pom('gwt').model.developers = pom('default').model.developers
+			pom('gwt').model.scm = pom('default').model.scm
 
         	pom('gwt').withXml {
         		// ugh, ugly
