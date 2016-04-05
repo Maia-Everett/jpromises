@@ -9,7 +9,7 @@ The GWT module also includes the `JsPromise` class, a thin wrapper around native
 
 ## Latest release
 
-The most latest release is version 0.1. [(Javadoc)](http://jpromises.lucidfox.org/javadoc/)
+The most recent release is version 0.1. [(Javadoc)](http://jpromises.lucidfox.org/javadoc/)
 
 ### Maven
 
@@ -25,8 +25,8 @@ And if you need the GWT module:
 
 ```xml
 <dependency>
-  <groupId>org.lucidfox.jpromises-gwt</groupId>
-  <artifactId>jpromises</artifactId>
+  <groupId>org.lucidfox.jpromises</groupId>
+  <artifactId>jpromises-gwt</artifactId>
   <version>0.1</version>
 </dependency>
 ```
