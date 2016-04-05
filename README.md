@@ -7,6 +7,9 @@ Its main goal is to eliminate "callback hell" that arises with code heavily invo
 
 The GWT module also includes the `JsPromise` class, a thin wrapper around native JavaScript promises from ES6.
 
+The library has no external dependencies and requires **Java 7 or later**, but is designed with Java 8 idioms in mind,
+and Java 8 is strongly recommended because lambda expressions make typical use cases a lot more concise and readable.
+
 ## Latest release
 
 The most recent release is version 0.1. [(Javadoc)](http://jpromises.lucidfox.org/javadoc/)
