@@ -1,15 +1,17 @@
 # Java Library for Promises
 
 The JPromises library is a *mostly* compliant implementation of the
-[JavaScript Promises/A+ specification](http://promisesaplus.com/) in Java.
-It is designed to be compatible with AWT and GWT, and potentially with any kind of event dispatch mechanism.
+[JavaScript Promises/A+ specification](http://promisesaplus.com/) in Java. It is designed to be compatible with
+AWT/Swing, JavaFX and GWT, and potentially with any kind of event dispatch mechanism.
 Its main goal is to eliminate "callback hell" that arises with code heavily involving Node/GWT style async callbacks.
+
+The GWT module also includes the `JsPromise` class, a thin wrapper around native JavaScript promises from ES6.
 
 ## Latest release
 
 The most latest release is version 0.1. [(Javadoc)](http://jpromises.lucidfox.org/javadoc/)
 
-Maven:
+### Maven
 
 ```xml
 <dependency>
@@ -19,10 +21,26 @@ Maven:
 </dependency>
 ```
 
+And if you need the GWT module:
+
+```xml
+<dependency>
+  <groupId>org.lucidfox.jpromises-gwt</groupId>
+  <artifactId>jpromises</artifactId>
+  <version>0.1</version>
+</dependency>
+```
+
 Gradle:
 
 ```
 'org.lucidfox.jpromises:jpromises:0.1'
+```
+
+And if you need the GWT module:
+
+```
+'org.lucidfox.jpromises:jpromises-gwt:0.1'
 ```
 
 ## Advantages
