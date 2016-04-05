@@ -5,7 +5,25 @@ The JPromises library is a *mostly* compliant implementation of the
 It is designed to be compatible with AWT and GWT, and potentially with any kind of event dispatch mechanism.
 Its main goal is to eliminate "callback hell" that arises with code heavily involving Node/GWT style async callbacks.
 
-* [Javadoc](http://jpromises.lucidfox.org/javadoc/)
+## Latest release
+
+The most latest release is version 0.1. [(Javadoc)](http://jpromises.lucidfox.org/javadoc/)
+
+Maven:
+
+```xml
+<dependency>
+  <groupId>org.lucidfox.jpromises</groupId>
+  <artifactId>jpromises</artifactId>
+  <version>0.1</version>
+</dependency>
+```
+
+Gradle:
+
+```
+'org.lucidfox.jpromises:jpromises:0.1'
+```
 
 ## Advantages
 
