@@ -302,6 +302,32 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
+	 * Same as {@link #then(ResolveCallback, RejectCallback)}. This method is provided for users used to the
+	 * {@code CompletableFuture} API.
+	 *
+	 * @param <R> the value type of the result promise
+	 * @param onResolve the resolve callback (optional)
+	 * @param onReject the reject callback (optional)
+	 * @return a {@link Promise} that is chained after the current promise
+	 */
+	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, R> onResolve, final RejectCallback<R> onReject) {
+		return then(onResolve, onReject);
+	}
+	
+	/**
+	 * Same as {@link #then(ResolveCallback)}. This method is provided for users used to the
+	 * {@code CompletableFuture} API.
+	 * 
+	 * @param <R> the value type of the result promise
+	 * @see #then(ResolveCallback,RejectCallback)
+	 * @param onResolve the resolve callback (optional)
+	 * @return a {@link Promise} that is chained after the current promise
+	 */
+	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, R> onResolve) {
+		return then(onResolve, null);
+	}
+	
+	/**
 	 * Calls {@code then(x, onReject)}, where {@code x} is a resolve callback returning this promise.
 	 * In lambda expression form, equivalent to {@code then(value -> this, onReject)}.
 	 * <p>
@@ -333,7 +359,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public Promise<Void> then(final VoidResolveCallback<? super V> onResolve, final VoidRejectCallback onReject) {
+	public Promise<Void> thenAccept(final VoidResolveCallback<? super V> onResolve, final VoidRejectCallback onReject) {
 		return then(onResolve == null ? null : new ResolveCallback<V, Void>() {
 			@Override
 			public Thenable<Void> onResolve(final V value) throws Exception {
@@ -356,8 +382,8 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onResolve the resolve callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public Promise<Void> then(final VoidResolveCallback<? super V> onResolve) {
-		return then(onResolve, null);
+	public Promise<Void> thenAccept(final VoidResolveCallback<? super V> onResolve) {
+		return thenAccept(onResolve, null);
 	}
 	/**
 	 * Calls {@code then(null, onReject)}.
@@ -366,8 +392,8 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public Promise<Void> onException(final VoidRejectCallback onReject) {
-		return then(null, onReject);
+	public Promise<Void> onExceptionAccept(final VoidRejectCallback onReject) {
+		return thenAccept(null, onReject);
 	}
 	
 	/**
@@ -380,7 +406,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 */
 	public void done(final VoidResolveCallback<? super V> onResolve, final VoidRejectCallback onReject) {
-		then(onResolve, onReject);
+		thenAccept(onResolve, onReject);
 	}
 	
 	/**
