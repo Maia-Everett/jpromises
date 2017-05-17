@@ -24,9 +24,9 @@ package org.lucidfox.jpromises.android;
 import android.app.Activity;
 import android.os.Handler;
 
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.annotation.GwtIncompatible;
 import org.lucidfox.jpromises.core.DeferredInvoker;
-import org.lucidfox.jpromises.core.PromiseFactory;
 
 /**
  * Promise factory that eases Android integration by providing standard deferred invokers for an activity's UI thread

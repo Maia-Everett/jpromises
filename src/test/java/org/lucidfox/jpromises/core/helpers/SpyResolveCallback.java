@@ -2,7 +2,7 @@ package org.lucidfox.jpromises.core.helpers;
 
 import static org.junit.Assert.*;
 
-import org.lucidfox.jpromises.core.PromiseFactory;
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.ResolveCallback;
 import org.lucidfox.jpromises.core.Thenable;
 

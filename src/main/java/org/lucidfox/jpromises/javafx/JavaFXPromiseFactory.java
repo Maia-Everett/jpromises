@@ -24,9 +24,9 @@ package org.lucidfox.jpromises.javafx;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.annotation.GwtIncompatible;
 import org.lucidfox.jpromises.core.DeferredInvoker;
-import org.lucidfox.jpromises.core.PromiseFactory;
 
 /**
  * <p>

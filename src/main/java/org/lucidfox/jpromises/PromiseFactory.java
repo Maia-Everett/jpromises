@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lucidfox.jpromises.core;
+package org.lucidfox.jpromises;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.lucidfox.jpromises.annotation.GwtCompatible;
+import org.lucidfox.jpromises.core.DeferredInvoker;
+import org.lucidfox.jpromises.core.PromiseHandler;
+import org.lucidfox.jpromises.core.RejectCallback;
+import org.lucidfox.jpromises.core.ResolveCallback;
+import org.lucidfox.jpromises.core.Resolver;
+import org.lucidfox.jpromises.core.Thenable;
 
 /**
  * <p>

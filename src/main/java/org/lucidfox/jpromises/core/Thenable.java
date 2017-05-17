@@ -21,6 +21,9 @@
  */
 package org.lucidfox.jpromises.core;
 
+import org.lucidfox.jpromises.Promise;
+import org.lucidfox.jpromises.PromiseFactory;
+
 /**
  * <p>
  * Abstract interface for "promise-like" objects containing a {@code then} method.

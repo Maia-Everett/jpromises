@@ -21,6 +21,8 @@
  */
 package org.lucidfox.jpromises.core;
 
+import org.lucidfox.jpromises.Promise;
+
 /**
  * A callback to be invoked when a {@link Promise} or arbitrary {@link Thenable} is resolved.
  *

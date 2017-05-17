@@ -21,6 +21,8 @@
  */
 package org.lucidfox.jpromises.core;
 
+import org.lucidfox.jpromises.PromiseFactory;
+
 /**
  * <p>
  * Abstract interface specifying how promises constructed by a {@link PromiseFactory} defer processing of pending

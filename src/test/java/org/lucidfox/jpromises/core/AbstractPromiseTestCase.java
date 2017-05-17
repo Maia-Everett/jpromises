@@ -8,6 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.lucidfox.jpromises.Promise;
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
 import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 

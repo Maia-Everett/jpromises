@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.Promise;
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 import org.lucidfox.jpromises.core.helpers.SpyRejectCallback;
 import org.lucidfox.jpromises.core.helpers.SpyResolveCallback;

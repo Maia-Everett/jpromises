@@ -23,9 +23,9 @@ package org.lucidfox.jpromises.awt;
 
 import java.awt.EventQueue;
 
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.annotation.GwtIncompatible;
 import org.lucidfox.jpromises.core.DeferredInvoker;
-import org.lucidfox.jpromises.core.PromiseFactory;
 
 /**
  * A {@link PromiseFactory} specialized for AWT and Swing. This factory's {@link DeferredInvoker} executes tasks

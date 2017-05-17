@@ -21,6 +21,8 @@
  */
 package org.lucidfox.jpromises.core;
 
+import org.lucidfox.jpromises.Promise;
+
 /**
  * Convenience callback type that works like {@link ResolveCallback}, but returns no value.
  *

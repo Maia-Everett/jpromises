@@ -22,6 +22,8 @@
 package org.lucidfox.jpromises.core;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.Promise;
+import org.lucidfox.jpromises.PromiseFactory;
 
 public class SimpleTests extends AbstractPromiseTestCase {
 	@Test

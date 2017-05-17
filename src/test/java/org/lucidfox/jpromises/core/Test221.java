@@ -1,6 +1,7 @@
 package org.lucidfox.jpromises.core;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 
 /**

@@ -3,6 +3,8 @@ package org.lucidfox.jpromises.core;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.Promise;
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
 import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 

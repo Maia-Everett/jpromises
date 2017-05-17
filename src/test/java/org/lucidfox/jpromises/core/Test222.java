@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
+import org.lucidfox.jpromises.Promise;
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.helpers.DeferredPromiseHandler;
 import org.lucidfox.jpromises.core.helpers.JsAnalogue;
 

@@ -21,9 +21,9 @@
  */
 package org.lucidfox.jpromises.gwt;
 
+import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.annotation.GwtCompatible;
 import org.lucidfox.jpromises.core.DeferredInvoker;
-import org.lucidfox.jpromises.core.PromiseFactory;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
