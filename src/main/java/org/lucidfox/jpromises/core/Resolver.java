@@ -24,7 +24,7 @@ package org.lucidfox.jpromises.core;
 /**
  * <p>
  * A helper interface used when initializing a promise with a {@link PromiseHandler}, to allow the promise handler
- * to resolve the promise to a specific value.
+ * to resolve the promise to a specific value or reject it with a specific exception.
  * </p>
  * <p>
  * This interface is not intended to be implemented by library users.
@@ -48,4 +48,12 @@ public interface Resolver<V> {
 	 * @throws IllegalStateException if the promise is already resolved or rejected
 	 */
 	void deferResolve(Thenable<? extends V> thenable);
+	
+	/**
+	 * Rejects the promise with the given rejection reason.
+	 *
+	 * @param exception the exception (rejection reason)
+	 * @throws IllegalStateException if the promise is already resolved or rejected
+	 */
+	void reject(Throwable exception);
 }

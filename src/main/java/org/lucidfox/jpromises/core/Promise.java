@@ -88,7 +88,7 @@ public final class Promise<V> implements Thenable<V> {
 				public void deferResolve(final Thenable<? extends V> thenable) {
 					Promise.this.deferResolve(thenable);
 				}
-			}, new Rejector() {
+
 				@Override
 				public void reject(final Throwable exception) {
 					Promise.this.reject(exception);
@@ -191,9 +191,8 @@ public final class Promise<V> implements Thenable<V> {
 		
 		final Promise<R> result = new Promise<>(deferredInvoker, new PromiseHandler<R>() {
 			@Override
-			public void handle(final Resolver<R> resolve, final Rejector reject) {
+			public void handle(final Resolver<R> resolve) {
 				deferred.thenResolver = resolve;
-				deferred.thenRejector = reject;
 			}
 		});
 		
@@ -254,11 +253,11 @@ public final class Promise<V> implements Thenable<V> {
 			
 			if (next == null) {
 				if (exceptionInCallback != null) {
-					deferred.thenRejector.reject(exceptionInCallback);
+					deferred.thenResolver.reject(exceptionInCallback);
 				} else if (state == State.RESOLVED) {
 					deferred.thenResolver.resolve(null);
 				} else {
-					deferred.thenRejector.reject(rejectedException);
+					deferred.thenResolver.reject(rejectedException);
 				}
 			} else {
 				try {
@@ -271,12 +270,12 @@ public final class Promise<V> implements Thenable<V> {
 					}, new RejectCallback<Void>() {
 						@Override
 						public Promise<Void> onReject(final Throwable exception) {
-							deferred.thenRejector.reject(exception);
+							deferred.thenResolver.reject(exception);
 							return null;
 						}
 					});
 				} catch (final Exception e) {
-					deferred.thenRejector.reject(e);
+					deferred.thenResolver.reject(e);
 				}
 			}
 		}
@@ -401,6 +400,5 @@ public final class Promise<V> implements Thenable<V> {
 		private ResolveCallback<? super V, R> resolveCallback;
 		private RejectCallback<R> rejectCallback;
 		private Resolver<R> thenResolver;
-		private Rejector thenRejector;
 	}
 }

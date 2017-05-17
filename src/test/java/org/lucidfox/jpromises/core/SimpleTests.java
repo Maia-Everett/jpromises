@@ -31,7 +31,7 @@ public class SimpleTests extends AbstractPromiseTestCase {
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				factory.promise(new PromiseHandler<String>() {
 					@Override
-					public void handle(final Resolver<String> resolve, final Rejector reject) {
+					public void handle(final Resolver<String> resolve) {
 						resolve.resolve("Hello World!");
 					}
 				}).then(new ResolveCallback<String, Void>() {
@@ -53,7 +53,7 @@ public class SimpleTests extends AbstractPromiseTestCase {
 			public void run(final PromiseFactory factory, final PromiseTestHandler handler) throws Exception {
 				factory.promise(new PromiseHandler<String>() {
 					@Override
-					public void handle(final Resolver<String> resolve, final Rejector reject) {
+					public void handle(final Resolver<String> resolve) {
 						System.out.println("testTwoThens: In handle");
 						resolve.resolve("Hello World!");
 					}

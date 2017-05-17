@@ -43,5 +43,5 @@ public interface PromiseHandler<V> {
 	 * @throws Exception This method is allowed to throw exceptions, mostly for implementor convenience. Any exception
 	 * 			thrown by {#link #handle} is called and passed to {@code reject}.
 	 */
-	void handle(Resolver<V> resolve, Rejector reject) throws Exception;
+	void handle(Resolver<V> resolve) throws Exception;
 }

@@ -100,7 +100,7 @@ public class PromiseFactory {
 	public final <V> Promise<V> resolve(final V value) {
 		return promise(new PromiseHandler<V>() {
 			@Override
-			public void handle(final Resolver<V> resolve, final Rejector reject) {
+			public void handle(final Resolver<V> resolve) {
 				resolve.resolve(value);
 			}
 		});
@@ -132,7 +132,7 @@ public class PromiseFactory {
 		
 		return promise(new PromiseHandler<V>() {
 			@Override
-			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
+			public void handle(final Resolver<V> resolve) throws Exception {
 				resolve.deferResolve(thenable);
 			}
 		});
@@ -148,8 +148,8 @@ public class PromiseFactory {
 	public final <V> Promise<V> reject(final Throwable exception) {
 		return promise(new PromiseHandler<V>() {
 			@Override
-			public void handle(final Resolver<V> resolve, final Rejector reject) {
-				reject.reject(exception);
+			public void handle(final Resolver<V> resolve) {
+				resolve.reject(exception);
 			}
 		});
 	}
@@ -165,7 +165,7 @@ public class PromiseFactory {
 	public final <V> Promise<V> flatten(final Thenable<? extends Thenable<? extends V>> layeredThenable) {
 		return promise(new PromiseHandler<V>() {
 			@Override
-			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
+			public void handle(final Resolver<V> resolve) throws Exception {
 				layeredThenable.then(new ResolveCallback<Thenable<? extends V>, V>() {
 					@Override
 					public Thenable<V> onResolve(final Thenable<? extends V> returnedThenable) throws Exception {
@@ -175,7 +175,7 @@ public class PromiseFactory {
 				}, new RejectCallback<V>() {
 					@Override
 					public Thenable<V> onReject(final Throwable exception) throws Exception {
-						reject.reject(exception);
+						resolve.reject(exception);
 						return null;
 					}
 				});
@@ -213,7 +213,7 @@ public class PromiseFactory {
 			private Object lock = new Object();
 			
 			@Override
-			public void handle(final Resolver<List<V>> resolve, final Rejector reject) throws Exception {
+			public void handle(final Resolver<List<V>> resolve) throws Exception {
 				try {
 					remaining = thenables.size();
 					
@@ -253,7 +253,7 @@ public class PromiseFactory {
 							public Promise<Void> onReject(final Throwable exception) {
 								synchronized (lock) {
 									remaining = 0;
-									reject.reject(exception);
+									resolve.reject(exception);
 									return null;
 								}
 							}
@@ -297,7 +297,7 @@ public class PromiseFactory {
 			private volatile boolean anyFinished = false;
 			
 			@Override
-			public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
+			public void handle(final Resolver<V> resolve) throws Exception {
 				try {
 					for (final Thenable<? extends V> thenable: thenables) {
 						thenable.then(new ResolveCallback<V, Void>() {
@@ -314,7 +314,7 @@ public class PromiseFactory {
 							@Override
 							public Promise<Void> onReject(final Throwable exception) {
 								if (!anyFinished) {
-									reject.reject(exception);
+									resolve.reject(exception);
 									anyFinished = true;
 								}
 								

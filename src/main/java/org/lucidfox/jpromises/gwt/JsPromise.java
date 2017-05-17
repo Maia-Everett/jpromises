@@ -23,7 +23,6 @@ package org.lucidfox.jpromises.gwt;
 
 import org.lucidfox.jpromises.core.PromiseHandler;
 import org.lucidfox.jpromises.core.RejectCallback;
-import org.lucidfox.jpromises.core.Rejector;
 import org.lucidfox.jpromises.core.ResolveCallback;
 import org.lucidfox.jpromises.core.Resolver;
 import org.lucidfox.jpromises.core.Thenable;
@@ -60,7 +59,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	public static <V> JsPromise<V> deferResolve(final Thenable<? extends V> thenable) {
 		return create(new PromiseHandler<V>() {
 			@Override
-			public void handle(final Resolver<V> resolve, final Rejector reject) {
+			public void handle(final Resolver<V> resolve) {
 				resolve.deferResolve(thenable);
 			}
 		});
@@ -127,7 +126,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 						}
 					}
 				}
-			}, new Rejector() {
+
 				@Override
 				public void reject(final Throwable e) {
 					rejectThrown(reject, e);

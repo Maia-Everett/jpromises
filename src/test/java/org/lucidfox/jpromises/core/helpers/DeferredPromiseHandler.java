@@ -1,23 +1,20 @@
 package org.lucidfox.jpromises.core.helpers;
 
 import org.lucidfox.jpromises.core.PromiseHandler;
-import org.lucidfox.jpromises.core.Rejector;
 import org.lucidfox.jpromises.core.Resolver;
 import org.lucidfox.jpromises.core.Thenable;
 
-public class DeferredPromiseHandler<V> implements PromiseHandler<V>, Resolver<V>, Rejector {
+public class DeferredPromiseHandler<V> implements PromiseHandler<V>, Resolver<V> {
 	private Resolver<V> resolver;
-	private Rejector rejector;
 	
 	@Override
-	public void handle(final Resolver<V> resolve, final Rejector reject) throws Exception {
+	public void handle(final Resolver<V> resolve) throws Exception {
 		resolver = resolve;
-		rejector = reject;
 	}
 
 	@Override
 	public void reject(final Throwable exception) {
-		rejector.reject(exception);
+		resolver.reject(exception);
 	}
 
 	@Override
