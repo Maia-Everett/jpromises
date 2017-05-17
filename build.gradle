@@ -38,6 +38,12 @@ jar {
 	}
 }
 
+javadoc {
+	options.addStringOption('tag', 'apiNote:a:API Note:')
+	// options.addStringOption('tag', 'implSpec:a:Implementation Requirements:')
+    // options.addStringOption('tag', 'implNote:a:Implementation Note:')
+}
+
 repositories {
 	jcenter()
 }

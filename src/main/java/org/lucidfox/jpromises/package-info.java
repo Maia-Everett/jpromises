@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Maia Everett <maia@lucidfox.org>
+ * Copyright 2017 Maia Everett <maia@lucidfox.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,6 @@
  * THE SOFTWARE.
  */
 /**
- * Interfaces used in the core implementation of Java Promises.
+ * Main classes of the JPromises library - Promise and PromiseFactory.
  */
-package org.lucidfox.jpromises.core;
+package org.lucidfox.jpromises;

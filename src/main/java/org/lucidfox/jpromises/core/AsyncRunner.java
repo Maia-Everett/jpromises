@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Maia Everett <maia@lucidfox.org>
+ * Copyright 2017 Maia Everett <maia@lucidfox.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * Interfaces used in the core implementation of Java Promises.
- */
 package org.lucidfox.jpromises.core;
+
+/**
+ * Abstract interface implemented by objects that can run blocks of code asynchronously -
+ * typically in a different thread, or using higher-level facilities such as an
+ * {@link java.util.concurrent.ExecutorService ExecutorService}.
+ *
+ * @apiNote This interface effectively duplicates {@link java.util.concurrent.Executor},
+ * which is not available in GWT.
+ */
+public interface AsyncRunner {
+	/**
+	 * Schedules the specified {@link Runnable} for asynchronous execution.
+	 *
+	 * @param task the task to invoke asynchronously
+	 */
+	void runAsync(Runnable task);
+}

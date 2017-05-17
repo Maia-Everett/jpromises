@@ -5,7 +5,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: JPromises Checkstyle Configuration
+    Checkstyle-Configuration: Local
     Description: none
 -->
 <module name="Checker">
@@ -19,6 +19,7 @@
     </module>
     <module name="JavadocType">
       <property name="scope" value="public"/>
+      <property name="allowUnknownTags" value="true"/>
     </module>
     <module name="JavadocVariable">
       <property name="severity" value="ignore"/>
@@ -115,6 +116,12 @@
     </module>
     <module name="AvoidStaticImport">
       <property name="excludes" value="org.junit.Assert.*"/>
+    </module>
+    <module name="JavadocType">
+      <property name="allowUnknownTags" value="true"/>
+    </module>
+    <module name="JavadocMethod">
+      <property name="suppressLoadErrors" value="true"/>
     </module>
   </module>
   <module name="JavadocPackage"/>

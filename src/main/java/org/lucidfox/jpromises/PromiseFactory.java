@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.lucidfox.jpromises.annotation.GwtCompatible;
+import org.lucidfox.jpromises.core.AsyncRunner;
 import org.lucidfox.jpromises.core.DeferredInvoker;
 import org.lucidfox.jpromises.core.PromiseHandler;
 import org.lucidfox.jpromises.core.RejectCallback;
@@ -39,6 +40,7 @@ import org.lucidfox.jpromises.core.Thenable;
  * A factory for creating Promise objects. It encapsulates a {@link DeferredInvoker} to create {@link Promise} objects
  * using the specified deferred invocation policy.
  * </p>
+ * 
  * @apiNote In the JavaScript Promises implementation, the methods returned by this class are present as
  * static methods of the {@code Promise} class. Here, they are collected in a separate factory class to allow
  * specifying different deferred invocation policies. This class is not made final, so that it can be subclassed
@@ -76,6 +78,33 @@ public class PromiseFactory {
 	 */
 	public final <V> Promise<V> promise(final PromiseHandler<V> handler) {
 		return new Promise<>(deferredInvoker, handler);
+	}
+	
+	/**
+	 * Instantiates a new {@link Promise} asynchronously with the given {@link PromiseHandler}. The execution of the
+	 * promise handler is delegated to {@code asyncRunner}.
+	 *
+	 * @param <V> the value type of the promise
+	 * @param handler the promise handler
+	 * @param asyncRunner 
+	 * @return the new promise whose evaluation is specified by the handler
+	 */
+	public final <V> Promise<V> promiseAsync(final PromiseHandler<V> handler, final AsyncRunner asyncRunner) {
+		return promise(new PromiseHandler<V>() {
+			@Override
+			public void handle(final Resolver<V> resolve) throws Exception {
+				asyncRunner.runAsync(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							handler.handle(resolve);
+						} catch (final Exception e) {
+							resolve.reject(e);
+						}
+					}
+				});
+			}
+		});
 	}
 	
 	/**
