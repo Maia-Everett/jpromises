@@ -290,7 +290,7 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Convenience method. Calls {@code then(onResolve, null)}.
+	 * Calls {@code then(onResolve, null)}.
 	 * 
 	 * @param <R> the value type of the result promise
 	 * @see #then(ResolveCallback,RejectCallback)
@@ -302,19 +302,28 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Convenience method. Calls {@code then(null, onReject)}.
+	 * Calls {@code then(x, onReject)}, where {@code x} is a resolve callback returning this promise.
+	 * In lambda expression form, equivalent to {@code then(value -> this, onReject)}.
+	 * <p>
+	 * This guarantees that if this promise resolves succesfully, its value will propagate to the next then-handler
+	 * in the chain.
+	 * </p>
 	 * 
-	 * @param <R> the value type of the result promise
 	 * @see #then(ResolveCallback,RejectCallback)
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public <R> Promise<R> onException(final RejectCallback<R> onReject) {
-		return then(null, onReject);
+	public Promise<V> onException(final RejectCallback<V> onReject) {
+		return then(new ResolveCallback<V, V>() {
+			@Override
+			public Thenable<V> onResolve(final V value) throws Exception {
+				return Promise.this;
+			}
+		}, onReject);
 	}
 	
 	/**
-	 * Convenience method. Works like the regular {@code then} method, except the callbacks passed to it cannot return
+	 * Works like the regular {@code then} method, except the callbacks passed to it cannot return
 	 * a promise. It works as if a {@code return null} was appended to {@code onResolve} and {@code onReject}, which
 	 * causes the promise to return a new {@code Promise<Void>} that is resolved to {@code null} after the current
 	 * promise is resolved.
@@ -341,7 +350,7 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Convenience method. Calls {@code then(onResolve, null)}.
+	 * Calls {@code then(onResolve, null)}.
 	 * 
 	 * @see #then(VoidResolveCallback,VoidRejectCallback)
 	 * @param onResolve the resolve callback (optional)
@@ -351,7 +360,7 @@ public final class Promise<V> implements Thenable<V> {
 		return then(onResolve, null);
 	}
 	/**
-	 * Convenience method. Calls {@code then(null, onReject)}.
+	 * Calls {@code then(null, onReject)}.
 	 * 
 	 * @see #then(VoidResolveCallback,VoidRejectCallback)
 	 * @param onReject the reject callback (optional)
@@ -362,7 +371,7 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Convenience method. Works like the regular {@code then} method, except the callbacks passed to it cannot return
+	 * Works like the regular {@code then} method, except the callbacks passed to it cannot return
 	 * a promise. It works as if a {@code return null} was appended to {@code onResolve} and {@code onReject}. No
 	 * new promise is returned, and this method is intended to be the last in a chain of {@code then} calls.
 	 * 
