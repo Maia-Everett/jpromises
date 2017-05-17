@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Maia Everett <maia@lucidfox.org>
+ * Copyright 2014-2017 Maia Everett <maia@lucidfox.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,8 @@ import org.lucidfox.jpromises.core.RejectCallback;
 import org.lucidfox.jpromises.core.ResolveCallback;
 import org.lucidfox.jpromises.core.Resolver;
 import org.lucidfox.jpromises.core.Thenable;
+import org.lucidfox.jpromises.core.ValueRejectCallback;
+import org.lucidfox.jpromises.core.ValueResolveCallback;
 import org.lucidfox.jpromises.core.VoidRejectCallback;
 import org.lucidfox.jpromises.core.VoidResolveCallback;
 
@@ -109,6 +111,15 @@ public final class Promise<V> implements Thenable<V> {
 		}
 	}
 	
+	/* package */ Promise(final DeferredInvoker deferredInvoker, final V value) {
+		this(deferredInvoker, new PromiseHandler<V>() {
+			@Override
+			public void handle(final Resolver<V> resolve) {
+				resolve.resolve(value);
+			}
+		});
+	}
+	
 	private void resolve(final V value) {
 		synchronized (lock) {
 			if (state != State.PENDING) {
@@ -171,7 +182,9 @@ public final class Promise<V> implements Thenable<V> {
 
 	/**
 	 * <p>
-	 * Specifies code to be run after the promise is resolved (either to a value, or a rejection exception).
+	 * Returns a new {@code Promise} that, after this promise is resolved or rejected,
+	 * is in turn resolved/rejected with the value of the promise returned by {@code onResolve} if this promise was
+	 * resolved, or the value of the promise returned by {@code onReject} if this promise was rejected.
 	 * </p><p>
 	 * After the callbacks are registered using {@code then}, if the promise's computation completes successfully,
 	 * it calls {@code onResolve} with the computed value. If it fails, it calls {@code onReject} with
@@ -328,12 +341,8 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Calls {@code then(x, onReject)}, where {@code x} is a resolve callback returning this promise.
-	 * In lambda expression form, equivalent to {@code then(value -> this, onReject)}.
-	 * <p>
-	 * This guarantees that if this promise resolves succesfully, its value will propagate to the next then-handler
-	 * in the chain.
-	 * </p>
+	 * Returns a new {@code Promise} that, after this promise is rejected, is resolved with the promise returned by
+	 * {@code onReject}, or after this promise is resolved, is resolved with the value of this promise.
 	 * 
 	 * @see #then(ResolveCallback,RejectCallback)
 	 * @param onReject the reject callback (optional)
@@ -349,10 +358,76 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Works like the regular {@code then} method, except the callbacks passed to it cannot return
-	 * a promise. It works as if a {@code return null} was appended to {@code onResolve} and {@code onReject}, which
-	 * causes the promise to return a new {@code Promise<Void>} that is resolved to {@code null} after the current
-	 * promise is resolved.
+	 * Returns a new {@code Promise} that, after this promise is resolved or rejected, is immediately resolved to the
+	 * value returned by {@code onResolve} if this promise was resolved or by {@code onReject} if this promise was
+	 * rejected.
+	 * <p>
+	 * This method works like the regular {@code then} method, except the callbacks passed to it return a flat value
+	 * instead of a promise.
+	 * </p>
+	 * <p>
+	 * This implementation throws no exceptions. Any exception thrown during execution of {@code onResolve} or
+	 * {@code onReject} causes the resulting promise to be rejected with that exception.
+	 * </p>
+	 *
+	 * @see #then(ResolveCallback,RejectCallback)
+	 * @param <R> the value type of the result promise
+	 * @param onResolve the resolve callback (optional)
+	 * @param onReject the reject callback (optional)
+	 * @return a {@link Promise} that is chained after the current promise
+	 */
+	public <R> Promise<R> thenApply(final ValueResolveCallback<? super V, R> onResolve,
+			final ValueRejectCallback<R> onReject) {
+		return then(onResolve == null ? null : new ResolveCallback<V, R>() {
+			@Override
+			public Thenable<R> onResolve(final V value) throws Exception {
+				return new Promise<R>(deferredInvoker, onResolve.onResolve(value));
+			}
+		}, onReject == null ? null : new RejectCallback<R>() {
+			@Override
+			public Thenable<R> onReject(final Throwable exception) throws Exception {
+				return new Promise<R>(deferredInvoker, onReject.onReject(exception));
+			}
+		});
+	}
+	
+	/**
+	 * Calls {@code thenApply(onResolve, null)}.
+	 * 
+	 * @see #thenApply(ValueResolveCallback, ValueRejectCallback)
+	 * @param <R> the value type of the result promise
+	 * @param onResolve the resolve callback (optional)
+	 * @return a {@link Promise} that is chained after the current promise
+	 */
+	public <R> Promise<R> thenApply(final ValueResolveCallback<? super V, R> onResolve) {
+		return thenApply(onResolve, null);
+	}
+	
+	/**
+	 * Returns a promise that, after this promise is rejected, is resolved with the value returned by {@code onReject},
+	 * or after this promise is resolved, is resolved with the value of this promise.
+	 * 
+	 * @see #thenApply(ValueResolveCallback, ValueRejectCallback)
+	 * @param onReject the reject callback (optional)
+	 * @return a {@link Promise} that is chained after the current promise
+	 */
+	public Promise<V> onExceptionApply(final ValueRejectCallback<V> onReject) {
+		return thenApply(new ValueResolveCallback<V, V>() {
+			@Override
+			public V onResolve(final V value) throws Exception {
+				return value;
+			}
+		}, onReject);
+	}
+	
+	/**
+	 * Returns a new {@code Promise} that, after this promise is resolved or rejected, calls {@code onResolve} and
+	 * becomes resolved to {@code null} if this promise was resolved, or calls {@code onReject} and becomes resolved
+	 * to {@code null} if this promise was rejected.
+	 * <p>
+	 * This implementation throws no exceptions. Any exception thrown during execution of {@code onResolve} or
+	 * {@code onReject} causes the resulting promise to be rejected with that exception.
+	 * </p>
 	 * 
 	 * @see #then(ResolveCallback,RejectCallback)
 	 * @param onResolve the resolve callback (optional)
@@ -376,19 +451,21 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Calls {@code then(onResolve, null)}.
+	 * Calls {@code thenAccept(onResolve, null)}.
 	 * 
-	 * @see #then(VoidResolveCallback,VoidRejectCallback)
+	 * @see #thenAccept(VoidResolveCallback,VoidRejectCallback)
 	 * @param onResolve the resolve callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
 	public Promise<Void> thenAccept(final VoidResolveCallback<? super V> onResolve) {
 		return thenAccept(onResolve, null);
 	}
+	
 	/**
-	 * Calls {@code then(null, onReject)}.
+	 * Returns a promise that, after this promise is rejected, calls {@code onReject} and becomes resolved with
+	 * {@code null}, or after this promise is resolved, is resolved with {@code null}.
 	 * 
-	 * @see #then(VoidResolveCallback,VoidRejectCallback)
+	 * @see #thenAccept(VoidResolveCallback,VoidRejectCallback)
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
@@ -397,16 +474,25 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	/**
-	 * Works like the regular {@code then} method, except the callbacks passed to it cannot return
-	 * a promise. It works as if a {@code return null} was appended to {@code onResolve} and {@code onReject}. No
-	 * new promise is returned, and this method is intended to be the last in a chain of {@code then} calls.
+	 * Same as {@link #thenAccept(VoidResolveCallback,VoidRejectCallback)}, but does not return a value, preventing
+	 * any further additions to the then-chain after this promise.
 	 * 
-	 * @see #then(ResolveCallback,RejectCallback)
+	 * @see #thenAccept(VoidResolveCallback,VoidRejectCallback)
 	 * @param onResolve the resolve callback (optional)
 	 * @param onReject the reject callback (optional)
 	 */
 	public void done(final VoidResolveCallback<? super V> onResolve, final VoidRejectCallback onReject) {
 		thenAccept(onResolve, onReject);
+	}
+	
+	/**
+	 * Calls {@code done(onResolve, null)}.
+	 * 
+	 * @see #done(ResolveCallback,RejectCallback)
+	 * @param onResolve the resolve callback (optional)
+	 */
+	public void done(final VoidResolveCallback<? super V> onResolve) {
+		done(onResolve, null);
 	}
 	
 	/**

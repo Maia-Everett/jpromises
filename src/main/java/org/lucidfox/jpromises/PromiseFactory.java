@@ -173,12 +173,7 @@ public class PromiseFactory {
 	 * @return the promise resolved to the value
 	 */
 	public final <V> Promise<V> resolve(final V value) {
-		return promise(new PromiseHandler<V>() {
-			@Override
-			public void handle(final Resolver<V> resolve) {
-				resolve.resolve(value);
-			}
-		});
+		return new Promise<>(deferredInvoker, value);
 	}
 	
 	/**
