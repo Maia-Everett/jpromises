@@ -41,7 +41,6 @@ public interface PromiseHandler<V> {
 	 * </p> 
 	 *
 	 * @param resolve the resolver, which sets the promise into a resolved state with a given value
-	 * @param reject the rejector, which sets the promise into a rejected state with a given exception
 	 * @throws Exception This method is allowed to throw exceptions, mostly for implementor convenience. Any exception
 	 * 			thrown by {#link #handle} is called and passed to {@code reject}.
 	 */

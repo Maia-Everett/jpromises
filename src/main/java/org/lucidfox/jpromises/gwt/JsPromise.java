@@ -45,7 +45,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	 * @param value the value to resolve the promise with
 	 * @return the new JS promise
 	 */
-	public static native <V> JsPromise<V> resolve(final V value) /*-{
+	public static native <V> JsPromise<V> resolve(V value) /*-{
 		return $wnd.Promise.resolve(value);
 	}-*/;
 	
@@ -72,7 +72,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	 * @param exception the exception to reject the promise with
 	 * @return the new JS promise
 	 */
-	public static native <V> JsPromise<V> reject(final Throwable exception) /*-{
+	public static native <V> JsPromise<V> reject(Throwable exception) /*-{
 		return $wnd.Promise.reject(@JsPromise::toJsError(Ljava/lang/Throwable;)(exception));
 	}-*/;
 	
@@ -83,7 +83,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	 * @param handler the promise handler that can resolve or reject the promise inside it
 	 * @return the new JS promise
 	 */
-	public static native <V> JsPromise<V> create(final PromiseHandler<V> handler) /*-{
+	public static native <V> JsPromise<V> create(PromiseHandler<V> handler) /*-{
 		return new $wnd.Promise(function(resolve, reject) {
 			@JsPromise::handle(Lorg/lucidfox/jpromises/core/PromiseHandler;
 				Lcom/google/gwt/core/client/JavaScriptObject;
@@ -137,11 +137,11 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 		}
 	}
 	
-	private static native void resolveValue(final JavaScriptObject resolve, final Object obj) /*-{
+	private static native void resolveValue(JavaScriptObject resolve, Object obj) /*-{
 		resolve(obj);
 	}-*/;
 	
-	private static native void rejectThrown(final JavaScriptObject reject, final Throwable exception) /*-{
+	private static native void rejectThrown(JavaScriptObject reject, Throwable exception) /*-{
 		reject(@JsPromise::toJsError(Ljava/lang/Throwable;)(exception));
 	}-*/;
 	
@@ -154,7 +154,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 		}
 	}
 	
-	private static native JavaScriptObject toJsError0(final Throwable exception, final String message) /*-{
+	private static native JavaScriptObject toJsError0(Throwable exception, String message) /*-{
 		var error = new Error(message);
 		error.__jsPromiseWrappedException = exception;
 		return error;
@@ -173,8 +173,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	}
 
 	@Override
-	public native <R> JsPromise<R> then(final ResolveCallback<? super V, R> onResolve,
-			final RejectCallback<R> onReject) /*-{
+	public native <R> JsPromise<R> then(ResolveCallback<? super V, R> onResolve, RejectCallback<R> onReject) /*-{
 		return this.then(function(value) {
 			if (!onResolve) {
 				return null;

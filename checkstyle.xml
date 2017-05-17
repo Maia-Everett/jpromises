@@ -25,7 +25,10 @@
       <property name="severity" value="ignore"/>
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
-    <module name="JavadocStyle"/>
+    <module name="JavadocStyle">
+      <property name="severity" value="ignore"/>
+      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+    </module>
     <module name="ConstantName">
       <property name="severity" value="ignore"/>
       <property name="format" value="^([A-Z][A-Z0-9]*(_[A-Z0-9]+)*|log)$"/>
@@ -116,12 +119,6 @@
     </module>
     <module name="AvoidStaticImport">
       <property name="excludes" value="org.junit.Assert.*"/>
-    </module>
-    <module name="JavadocType">
-      <property name="allowUnknownTags" value="true"/>
-    </module>
-    <module name="JavadocMethod">
-      <property name="suppressLoadErrors" value="true"/>
     </module>
   </module>
   <module name="JavadocPackage"/>
