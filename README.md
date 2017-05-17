@@ -12,7 +12,7 @@ and Java 8 is strongly recommended because lambda expressions make typical use c
 
 ## Latest release
 
-The most recent release is version 0.1. [(Javadoc)](http://jpromises.lucidfox.org/javadoc/)
+The most recent release is version 0.1. [(Javadoc)](https://www.javadoc.io/doc/org.lucidfox.jpromises/jpromises/0.1)
 
 ### Maven
 
