@@ -24,8 +24,8 @@ package org.lucidfox.jpromises.core;
 import org.lucidfox.jpromises.Promise;
 
 /**
- * A handler that loads the initial value into the {@link Promise} using the {@link Resolver}, or fails using the
- * {@link Rejector} (but not both). It is passed to the promise at its creation time.
+ * A handler that loads the initial value into the {@link Promise} using {@link Resolver#resolve}, or fails using
+ * {@link Resolver#reject} (but not both). It is passed to the promise at its creation time.
  *
  * @param <V> the value type
  */

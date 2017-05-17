@@ -24,8 +24,8 @@ package org.lucidfox.jpromises.gwt;
 import org.lucidfox.jpromises.core.BasePromiseHandler;
 
 /**
- * A handler that loads the initial value into the {@link JsPromise} using the {@link JsResolver}, or fails using the
- * {@link Rejector} (but not both). It is passed to the promise at its creation time.
+ * A handler that loads the initial value into the {@link JsPromise} using {@link JsResolver#resolve}, or fails using
+ * {@link JsResolver#reject} (but not both). It is passed to the promise at its creation time.
  *
  * @param <V> the value type
  */
