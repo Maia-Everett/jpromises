@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Maia Everett <maia@lucidfox.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,5 +18,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ */
+/**
+ * Helper classes for using promises under Android.
  */
 package org.lucidfox.jpromises.android;

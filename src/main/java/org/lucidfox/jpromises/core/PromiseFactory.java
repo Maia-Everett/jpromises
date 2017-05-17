@@ -1,5 +1,5 @@
-/**
- * Copyright 2014 Maia Everett <maia@lucidfox.org>
+/*
+ * Copyright 2014-2017 Maia Everett <maia@lucidfox.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,12 +33,10 @@ import org.lucidfox.jpromises.annotation.GwtCompatible;
  * A factory for creating Promise objects. It encapsulates a {@link DeferredInvoker} to create {@link Promise} objects
  * using the specified deferred invocation policy.
  * </p>
- * <p>
- * <strong>Note:</strong> In the JavaScript Promises implementation, the methods returned by this class are present as
+ * @apiNote In the JavaScript Promises implementation, the methods returned by this class are present as
  * static methods of the {@code Promise} class. Here, they are collected in a separate factory class to allow
  * specifying different deferred invocation policies. This class is not made final, so that it can be subclassed
  * with more convenience methods, or bound to a specific {@code DeferredInvoker}.
- * </p>
  */
 @GwtCompatible
 public class PromiseFactory {
@@ -46,8 +44,17 @@ public class PromiseFactory {
 	/**
 	 * Instantiates a new promise factory.
 	 *
-	 * @param deferredInvoker the deferred invoker, responsible for scheduling asynchronous execution;
-	 * 			see {@link DeferredInvoker} documentation for more information.
+	 * <p>
+	 * All promises created by the resulting {@code PromiseFactory} will have their {@code then} callbacks executed
+	 * under the executor specified by the {@code deferredInvoker} parameter.
+	 * </p>
+	 *
+	 * @apiNote The primary use case for the JPromises library is typical GUI applications with a privileged main thread
+	 * (sometimes called the event dispatch thread) that starts all the background tasks. Requiring to specify the
+	 * policy for executing {@code then} callbacks ensures that they are executed on the main thread, after the
+	 * operation represented by the promise completes in background.
+	 *
+	 * @param deferredInvoker the deferred invoker used to run {@code then} callbacks
 	 */
 	public PromiseFactory(final DeferredInvoker deferredInvoker) {
 		this.deferredInvoker = deferredInvoker;

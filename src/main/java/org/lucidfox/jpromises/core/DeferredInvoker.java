@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 Maia Everett <maia@lucidfox.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,13 +24,13 @@ package org.lucidfox.jpromises.core;
 /**
  * <p>
  * Abstract interface specifying how promises constructed by a {@link PromiseFactory} defer processing of pending
- * {@link Promise#then} callbacks.
+ * {@code then} callbacks.
  * </p>
  * <p>
  * In practice, most systems with an event loop, including GUI systems, provide an "invoke later" method that allows
  * the application to post a task to be executed after all pending events in the event loop. For example, AWT/Swing
- * provides {@link java.awt.EventQueue#invokeLater() EventQueue.invokeLater()} and GWT provides
- * {@link com.google.gwt.core.client.Scheduler#scheduleDeferred() Scheduler.scheduleDeferred}. Adapters for AWT and GWT
+ * provides {@link java.awt.EventQueue#invokeLater EventQueue.invokeLater()} and GWT provides
+ * {@link com.google.gwt.core.client.Scheduler#scheduleDeferred Scheduler.scheduleDeferred}. Adapters for AWT and GWT
  * are provided by the JPromises library. For other frameworks or toolkits, consult their documentation 
  * to find out how to bind them to the Promises system.
  * </p>
