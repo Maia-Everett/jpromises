@@ -34,6 +34,8 @@ import org.lucidfox.jpromises.core.DeferredInvoker;
  */
 @GwtIncompatible("android")
 public class AndroidPromiseFactory extends PromiseFactory {
+	private final Thread thread;
+	
 	/**
 	 * Instantiates a new {@code AndroidPromiseFactory} that runs tasks deferred on the main thread.
 	 */
@@ -54,13 +56,17 @@ public class AndroidPromiseFactory extends PromiseFactory {
 				handler.post(task);
 			}
 		});
+
+		thread = handler.getLooper().getThread();
 	}
 
 	/**
-	 * Returns the string {@code "AndroidPromiseFactory"}.
+	 * Returns the string {@code "AndroidPromiseFactory (thread = %THREAD%)"}, where {@code %THREAD%} is the result
+	 * of calling {@link Thread#toString()} on the thread to which this promise factory is bound
+	 * (usually the main thread, but possibly also a message loop thread associated with a custom {@link Handler}).
 	 */
 	@Override
 	public String toString() {
-		return "AndroidPromiseFactory";
+		return "AndroidPromiseFactory (thread = " + thread + ")";
 	}
 }
