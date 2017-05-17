@@ -27,7 +27,7 @@ import org.lucidfox.jpromises.Promise;
  * Convenience callback type that works like {@link ResolveCallback}, but returns no value.
  *
  * @param <V> the value type of the promise the callback is being bound to via
- * {@link Promise#then(VoidResolveCallback,VoidRejectCallback)}
+ * {@link Promise#thenAccept(VoidResolveCallback,VoidRejectCallback)}
  */
 public interface VoidResolveCallback<V> {
 	

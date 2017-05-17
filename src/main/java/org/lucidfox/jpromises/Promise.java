@@ -493,7 +493,7 @@ public final class Promise<V> implements Thenable<V> {
 	/**
 	 * Calls {@code done(onResolve, null)}.
 	 * 
-	 * @see #done(ResolveCallback,RejectCallback)
+	 * @see #done(VoidResolveCallback,VoidRejectCallback)
 	 * @param onResolve the resolve callback (optional)
 	 */
 	public void done(final VoidResolveCallback<? super V> onResolve) {
