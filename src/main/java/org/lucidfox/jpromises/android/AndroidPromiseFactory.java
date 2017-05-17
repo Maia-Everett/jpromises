@@ -21,32 +21,24 @@
  */
 package org.lucidfox.jpromises.android;
 
-import android.app.Activity;
 import android.os.Handler;
+import android.os.Looper;
 
 import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.annotation.GwtIncompatible;
 import org.lucidfox.jpromises.core.DeferredInvoker;
 
 /**
- * Promise factory that eases Android integration by providing standard deferred invokers for an activity's UI thread
+ * Promise factory that eases Android integration by providing standard deferred invokers for the main thread
  * and handler threads.
  */
 @GwtIncompatible("android")
 public class AndroidPromiseFactory extends PromiseFactory {
 	/**
-	 * Instantiates a new {@code AndroidPromiseFactory} that uses the given activity's {@code runOnUiThread} method
-	 * as the deferred invoker.
-	 *
-	 * @param activity the activity to user
+	 * Instantiates a new {@code AndroidPromiseFactory} that runs tasks deferred on the main thread.
 	 */
-	public AndroidPromiseFactory(final Activity activity) {
-		super(new DeferredInvoker() {
-			@Override
-			public void invokeDeferred(final Runnable task) {
-				activity.runOnUiThread(task);
-			}
-		});
+	public AndroidPromiseFactory() {
+		this(new Handler(Looper.getMainLooper()));
 	}
 
 	/**
