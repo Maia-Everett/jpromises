@@ -34,6 +34,8 @@ import org.lucidfox.jpromises.core.RejectCallback;
 import org.lucidfox.jpromises.core.ResolveCallback;
 import org.lucidfox.jpromises.core.Resolver;
 import org.lucidfox.jpromises.core.Thenable;
+import org.lucidfox.jpromises.core.ThrowingRunnable;
+import org.lucidfox.jpromises.core.ThrowingSupplier;
 
 /**
  * <p>
@@ -86,7 +88,7 @@ public class PromiseFactory {
 	 *
 	 * @param <V> the value type of the promise
 	 * @param handler the promise handler
-	 * @param asyncRunner 
+	 * @param asyncRunner the runner responsible for asynchronously executing the promise handler
 	 * @return the new promise whose evaluation is specified by the handler
 	 */
 	public final <V> Promise<V> promiseAsync(final PromiseHandler<V> handler, final AsyncRunner asyncRunner) {
@@ -105,6 +107,44 @@ public class PromiseFactory {
 				});
 			}
 		});
+	}
+	
+	/**
+	 * Instantiates a new asynchronous {@link Promise} that completes when {@code runnable} finishes execution.
+	 * The execution of the runnable is delegated to {@code asyncRunner}.
+	 *
+	 * @param runnable the task that should resolve the promise when it finishes
+	 * @param asyncRunner the runner responsible for asynchronously executing the runnable
+	 * @return the new promise whose evaluation is specified by the runnable
+	 */
+	public final Promise<Void> runAsync(final ThrowingRunnable runnable, final AsyncRunner asyncRunner) {
+		return promiseAsync(new PromiseHandler<Void>() {
+			@Override
+			public void handle(final Resolver<Void> resolve) throws Exception {
+				runnable.run();
+				resolve.resolve(null);
+			}
+		}, asyncRunner);
+	}
+	
+	/**
+	 * Instantiates a new asynchronous {@link Promise} that completes when {@code supplier} finishes execution
+	 * and becomes resolved with the value it returns.
+	 * The execution of the runnable is delegated to {@code asyncRunner}.
+	 *
+	 * @param <V> the value type of the promise and supplier
+	 * @param supplier the supplier that returns the promise's eventual value
+	 * @param asyncRunner the runner responsible for asynchronously executing the supplier
+	 * @return the new promise whose evaluation is specified by the supplier
+	 */
+	public final <V> Promise<V> supplyAsync(final ThrowingSupplier<? extends V> supplier,
+			final AsyncRunner asyncRunner) {
+		return promiseAsync(new PromiseHandler<V>() {
+			@Override
+			public void handle(final Resolver<V> resolve) throws Exception {
+				resolve.resolve(supplier.get());
+			}
+		}, asyncRunner);
 	}
 	
 	/**
