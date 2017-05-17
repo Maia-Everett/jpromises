@@ -8,7 +8,7 @@ group = 'org.lucidfox.jpromises'
 version = '0.2.0-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '2.12'
+	gradleVersion = '3.5'
 }
 
 sourceSets {
