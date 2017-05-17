@@ -39,6 +39,10 @@ jar {
 }
 
 javadoc {
+	options.links("http://docs.oracle.com/javase/7/docs/api/")
+	options.links("http://www.gwtproject.org/javadoc/latest")
+	options.links("https://developer.android.com/reference/")
+
 	options.addStringOption('tag', 'apiNote:a:API Note:')
 	// options.addStringOption('tag', 'implSpec:a:Implementation Requirements:')
     // options.addStringOption('tag', 'implNote:a:Implementation Note:')

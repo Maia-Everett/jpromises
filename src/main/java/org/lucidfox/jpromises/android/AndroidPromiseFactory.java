@@ -64,6 +64,9 @@ public class AndroidPromiseFactory extends PromiseFactory {
 		});
 	}
 
+	/**
+	 * Returns the string {@code "AndroidPromiseFactory"}.
+	 */
 	@Override
 	public String toString() {
 		return "AndroidPromiseFactory";
