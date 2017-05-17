@@ -22,6 +22,7 @@
 package org.lucidfox.jpromises.gwt;
 
 import org.lucidfox.jpromises.core.BaseResolver;
+import org.lucidfox.jpromises.core.Thenable;
 
 /**
  * <p>
@@ -35,4 +36,15 @@ import org.lucidfox.jpromises.core.BaseResolver;
  * @param <V> the value type
  */
 public interface JsResolver<V> extends BaseResolver<V, JsPromise<V>> {
+	@Override
+	void resolve(V value);
+	
+	@Override
+	void deferResolve(Thenable<? extends V> thenable);
+	
+	@Override
+	void reject(Throwable exception);
+	
+	@Override
+	JsPromise<V> getPromise();
 }

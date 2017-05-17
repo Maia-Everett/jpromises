@@ -30,4 +30,6 @@ import org.lucidfox.jpromises.Promise;
  * @param <V> the value type
  */
 public interface PromiseHandler<V> extends BasePromiseHandler<V, Promise<V>, Resolver<V>> {
+	@Override
+	void handle(Resolver<V> resolve) throws Exception;
 }

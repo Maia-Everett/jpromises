@@ -35,4 +35,15 @@ import org.lucidfox.jpromises.Promise;
  * @param <V> the value type
  */
 public interface Resolver<V> extends BaseResolver<V, Promise<V>> {
+	@Override
+	void resolve(V value);
+	
+	@Override
+	void deferResolve(Thenable<? extends V> thenable);
+	
+	@Override
+	void reject(Throwable exception);
+	
+	@Override
+	Promise<V> getPromise();
 }
