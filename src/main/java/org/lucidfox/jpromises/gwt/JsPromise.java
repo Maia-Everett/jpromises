@@ -21,10 +21,8 @@
  */
 package org.lucidfox.jpromises.gwt;
 
-import org.lucidfox.jpromises.core.PromiseHandler;
 import org.lucidfox.jpromises.core.RejectCallback;
 import org.lucidfox.jpromises.core.ResolveCallback;
-import org.lucidfox.jpromises.core.Resolver;
 import org.lucidfox.jpromises.core.Thenable;
 
 import com.google.gwt.core.client.JavaScriptException;
@@ -57,9 +55,9 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	 * @return the new JS promise
 	 */
 	public static <V> JsPromise<V> deferResolve(final Thenable<? extends V> thenable) {
-		return create(new PromiseHandler<V>() {
+		return create(new JsPromiseHandler<V>() {
 			@Override
-			public void handle(final Resolver<V> resolve) {
+			public void handle(final JsResolver<V> resolve) {
 				resolve.deferResolve(thenable);
 			}
 		});
@@ -77,24 +75,34 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	}-*/;
 	
 	/**
-	 * Creates a native JS promise using the given {@link PromiseHandler}.
+	 * Creates a native JS promise using the given {@link JsPromiseHandler}.
 	 *
 	 * @param <V> the value type
 	 * @param handler the promise handler that can resolve or reject the promise inside it
 	 * @return the new JS promise
 	 */
-	public static native <V> JsPromise<V> create(PromiseHandler<V> handler) /*-{
-		return new $wnd.Promise(function(resolve, reject) {
-			@JsPromise::handle(Lorg/lucidfox/jpromises/core/PromiseHandler;
-				Lcom/google/gwt/core/client/JavaScriptObject;
-				Lcom/google/gwt/core/client/JavaScriptObject;)(handler, resolve, reject);
+	public static native <V> JsPromise<V> create(JsPromiseHandler<V> handler) /*-{
+		// Hack so we can access the promise instance
+		var _resolve;
+		var _reject;
+	
+		var promise = new $wnd.Promise(function(resolve, reject) {
+			_resolve = resolve;
+			_reject = reject;
 		});
+		
+		@JsPromise::handle(Lorg/lucidfox/jpromises/gwt/JsPromiseHandler;
+				Lcom/google/gwt/core/client/JavaScriptObject;
+				Lcom/google/gwt/core/client/JavaScriptObject;
+				Lorg/lucidfox/jpromises/gwt/JsPromise;)(handler, _resolve, _reject, promise);
+		
+		return promise;
 	}-*/;
 	
-	private static <V> void handle(final PromiseHandler<V> handler, final JavaScriptObject resolve,
-			final JavaScriptObject reject) {
+	private static <V> void handle(final JsPromiseHandler<V> handler, final JavaScriptObject resolve,
+			final JavaScriptObject reject, final JsPromise<V> promise) {
 		try {
-			handler.handle(new Resolver<V>() {
+			handler.handle(new JsResolver<V>() {
 				@Override
 				public void resolve(final V value) {
 					resolveValue(resolve, value);
@@ -130,6 +138,11 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 				@Override
 				public void reject(final Throwable e) {
 					rejectThrown(reject, e);
+				}
+
+				@Override
+				public JsPromise<V> getPromise() {
+					return promise;
 				};
 			});
 		} catch (final Exception e) {

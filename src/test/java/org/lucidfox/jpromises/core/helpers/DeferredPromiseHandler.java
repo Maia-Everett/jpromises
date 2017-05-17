@@ -1,5 +1,6 @@
 package org.lucidfox.jpromises.core.helpers;
 
+import org.lucidfox.jpromises.Promise;
 import org.lucidfox.jpromises.core.PromiseHandler;
 import org.lucidfox.jpromises.core.Resolver;
 import org.lucidfox.jpromises.core.Thenable;
@@ -25,5 +26,10 @@ public class DeferredPromiseHandler<V> implements PromiseHandler<V>, Resolver<V>
 	@Override
 	public void deferResolve(final Thenable<? extends V> thenable) {
 		resolver.deferResolve(thenable);
+	}
+
+	@Override
+	public Promise<V> getPromise() {
+		return resolver.getPromise();
 	}
 }

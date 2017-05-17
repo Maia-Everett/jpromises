@@ -103,6 +103,11 @@ public final class Promise<V> implements Thenable<V> {
 				public void reject(final Throwable exception) {
 					Promise.this.reject(exception);
 				}
+				
+				@Override
+				public Promise<V> getPromise() {
+					return Promise.this;
+				}
 			});
 		} catch (final Exception e) {
 			synchronized (lock) {

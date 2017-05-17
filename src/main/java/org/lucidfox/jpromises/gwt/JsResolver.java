@@ -19,15 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lucidfox.jpromises.core;
+package org.lucidfox.jpromises.gwt;
 
-import org.lucidfox.jpromises.Promise;
+import org.lucidfox.jpromises.core.BaseResolver;
 
 /**
- * A handler that loads the initial value into the {@link Promise} using the {@link Resolver}, or fails using the
- * {@link Rejector} (but not both). It is passed to the promise at its creation time.
+ * <p>
+ * A helper interface used when initializing a promise with a {@link JsPromiseHandler}, to allow the promise handler
+ * to resolve the promise to a specific value or reject it with a specific exception.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by library users.
+ * </p>
  *
  * @param <V> the value type
  */
-public interface PromiseHandler<V> extends BasePromiseHandler<V, Promise<V>, Resolver<V>> {
+public interface JsResolver<V> extends BaseResolver<V, JsPromise<V>> {
 }

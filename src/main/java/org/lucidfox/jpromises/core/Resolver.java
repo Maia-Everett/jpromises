@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Maia Everett <maia@lucidfox.org>
+ * Copyright 2014-2017 Maia Everett <maia@lucidfox.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,8 @@
  */
 package org.lucidfox.jpromises.core;
 
+import org.lucidfox.jpromises.Promise;
+
 /**
  * <p>
  * A helper interface used when initializing a promise with a {@link PromiseHandler}, to allow the promise handler
@@ -32,28 +34,5 @@ package org.lucidfox.jpromises.core;
  *
  * @param <V> the value type
  */
-public interface Resolver<V> {
-	/**
-	 * Resolves the promise to the given value.
-	 *
-	 * @param value the promise's new value
-	 * @throws IllegalStateException if the promise is already resolved or rejected
-	 */
-	void resolve(V value);
-	
-	/**
-	 * Defers resolution of the promise to the completion of the given {@link Thenable}.
-	 *
-	 * @param thenable the thenable that must be resolved first to resolve promise's new value
-	 * @throws IllegalStateException if the promise is already resolved or rejected
-	 */
-	void deferResolve(Thenable<? extends V> thenable);
-	
-	/**
-	 * Rejects the promise with the given rejection reason.
-	 *
-	 * @param exception the exception (rejection reason)
-	 * @throws IllegalStateException if the promise is already resolved or rejected
-	 */
-	void reject(Throwable exception);
+public interface Resolver<V> extends BaseResolver<V, Promise<V>> {
 }
