@@ -29,7 +29,7 @@ import com.google.gwt.core.client.JavaScriptException;
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
- * GWT JSNI type wrapping a native, ES6-compatible JavaScript promise. 
+ * GWT JSNI type wrapping a native, ES6-compatible JavaScript promise.
  * 
  * @param <V> value type
  */
@@ -184,24 +184,61 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	public <R> JsPromise<R> then(final ResolveCallback<? super V, R> onResolve) {
 		return then(onResolve, null);
 	}
-
+	
+	// We wrap then0 (which in turn wraps native then) for better handling of Java objects and exceptions
 	@Override
-	public native <R> JsPromise<R> then(ResolveCallback<? super V, R> onResolve, RejectCallback<R> onReject) /*-{
+	public <R> JsPromise<R> then(final ResolveCallback<? super V, R> onResolve, final RejectCallback<R> onReject) {
+		return then0(onResolve == null ? null : new ResolveCallback<V, R>() {
+			@Override
+			public Thenable<R> onResolve(final V value) {
+				try {
+					return coerceToNativePromise(onResolve.onResolve(value));
+				} catch (final Exception e) {
+					// A Java exception propagating to a native then-handler would be bad. Coerce it to a native error.
+					return JsPromise.reject(e);
+				}
+			}
+		}, onReject == null ? null : new RejectCallback<R>() {
+			@Override
+			public Thenable<R> onReject(final Throwable exception) {
+				try {
+					return coerceToNativePromise(onReject.onReject(exception));
+				} catch (final Exception e) {
+					// A Java exception propagating to a native then-handler would be bad. Coerce it to a native error.
+					return JsPromise.reject(e);
+				}
+			}
+		});
+	}
+
+	// Note that handling of onResolve and onReject is different in native code.
+	// If onResolve is null, we resolve the resulting promise to null. This guarantees compatibility with JPromises
+	// semantics and avoids propagation of original value (type V being interpreted as type R), at the cost of slight
+	// incompatibility with JS promise semantics.
+	// If onReject is null, we return null as the error handler, allowing exceptions to propagate to the next
+	// reject handler in the then-chain.
+	private native <R> JsPromise<R> then0(ResolveCallback<? super V, R> onResolve, RejectCallback<R> onReject) /*-{
 		return this.then(function(value) {
 			if (!onResolve) {
 				return null;
 			}
 		
 			return onResolve.@ResolveCallback::onResolve(Ljava/lang/Object;)(value);
-		}, function(err) {
-			if (!onReject) {
-				return null;
-			}
-		
+		}, !onReject ? null : function(err) {
 			var exception = error.__jsPromiseWrappedException || @JsPromise::toException(Ljava/lang/Object;)(err);
 			return onReject.@RejectCallback::onReject(Ljava/lang/Throwable;)(exception);
 		});
 	}-*/;
+	
+	private static <V> Thenable<V> coerceToNativePromise(final Thenable<V> thenable) {
+		if (thenable == null || thenable instanceof JavaScriptObject) {
+			// Compatible with native promises, no need to wrap
+			return thenable;
+		} else {
+			// Java object; need to wrap in native promise
+			return deferResolve(thenable);
+		}
+	}
 	
 	private static Exception toException(final Object jsError) {
 		return new JavaScriptException(jsError);
