@@ -45,7 +45,7 @@ javadoc {
 
 	options.addStringOption('tag', 'apiNote:a:API Note:')
 	// options.addStringOption('tag', 'implSpec:a:Implementation Requirements:')
-    // options.addStringOption('tag', 'implNote:a:Implementation Note:')
+	// options.addStringOption('tag', 'implNote:a:Implementation Note:')
 }
 
 repositories {
@@ -101,7 +101,7 @@ artifacts {
 }
 
 signing {
-    sign configurations.archives
+	sign configurations.archives
 }
 
 uploadArchives {
@@ -112,12 +112,12 @@ uploadArchives {
 			repository(url: 'file:///home/maia/workspace/jpromises/jpromises/build/repo/')
 			
 			addFilter('default') {artifact, file ->
-                artifact.name == "${project.name}"
-            }
+				artifact.name == "${project.name}"
+			}
 			
 			addFilter('gwt') {artifact, file ->
-                artifact.name == "${project.name}-gwt"
-            }
+				artifact.name == "${project.name}-gwt"
+			}
 		   
 			pom('default').project {
 				licenses {
@@ -159,20 +159,20 @@ uploadArchives {
 			pom('gwt').model.developers = pom('default').model.developers
 			pom('gwt').model.scm = pom('default').model.scm
 
-        	pom('gwt').withXml {
-        		// ugh, ugly
-            	def dependency = asNode().get('dependencies')[0].appendNode('dependency')
-            	dependency.appendNode('groupId', 'com.google.gwt')
-      			dependency.appendNode('artifactId', 'gwt-user')
-      			dependency.appendNode('version', '2.7.0')
-      			dependency.appendNode('scope', 'provided')
-      			
-      			dependency = asNode().get('dependencies')[0].appendNode('dependency')
-            	dependency.appendNode('groupId', "${project.group}")
-      			dependency.appendNode('artifactId', "${project.name}")
-      			dependency.appendNode('version', "${project.version}")
-      			dependency.appendNode('scope', 'compile')
-        	}
+			pom('gwt').withXml {
+				// ugh, ugly
+				def dependency = asNode().get('dependencies')[0].appendNode('dependency')
+				dependency.appendNode('groupId', 'com.google.gwt')
+	  			dependency.appendNode('artifactId', 'gwt-user')
+	  			dependency.appendNode('version', '2.7.0')
+	  			dependency.appendNode('scope', 'provided')
+	  			
+	  			dependency = asNode().get('dependencies')[0].appendNode('dependency')
+				dependency.appendNode('groupId', "${project.group}")
+	  			dependency.appendNode('artifactId', "${project.name}")
+	  			dependency.appendNode('version', "${project.version}")
+	  			dependency.appendNode('scope', 'compile')
+			}
 		}
 	}
 }
