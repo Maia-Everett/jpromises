@@ -267,7 +267,7 @@ The second parameter returns the same kind of value as the first; so for `thenAc
 
 If the exception handler itself throws an exception, the resulting promise will, obviously, be rejected with that exception.
 
-The second way to handle an exception is to let it bubble up through the entire promise chain until an exception handler is encountered (or not). If you don't pass an exception handler, or pass `null`, it will cause all promises in the chain to be rejected; promise rejection is thus a "contagious" condition, affecting all subsequent promises in the chain unless the exception is handled. (This makes it similar to stack unwinding for unhandled exceptions in ordinary synchronous code.)
+The second way to handle an exception is to let it trickle down through the entire promise chain until an exception handler is encountered (or not). If you don't pass an exception handler, or pass `null`, it will cause the next promise in the chain to be rejected with the same exception if the original promise is rejected; promise rejection is thus a "contagious" condition, affecting all subsequent promises in the chain unless the exception is handled. (This makes it similar to stack unwinding for unhandled exceptions in ordinary synchronous code.)
 
 Three methods, `onExceptionAccept`, `onExceptionApply` and `onException`, accept only an exception handler. The first is equivalent to `thenAccept(null, handler)`. The other two are restricted to returning a promise of the same type as the original promise. They are convenient for specifying some fallback behavior if the original operation fails.
 
