@@ -144,30 +144,30 @@ public final class Promise<V> implements Thenable<V> {
 			if (state != State.PENDING) {
 				throw new IllegalStateException("Promise state already defined.");
 			}
-			
-			if (thenable == this) {
-				throw new IllegalStateException("A promise cannot be resolved with itself.");
-			}
-			
-			// Promise Resolution Procedure:
-			// https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
-			try {
-				thenable.then(new ResolveCallback<V, Object>() {
-					@Override
-					public Promise<Object> onResolve(final V value) {
-						resolve(value);
-						return null;
-					}
-				}, new RejectCallback<Object>() {
-					@Override
-					public Promise<Object> onReject(final Throwable exception) {
-						reject(exception);
-						return null;
-					}
-				});
-			} catch (final Exception e) {
-				reject(e);
-			}
+		}
+		
+		if (thenable == this) {
+			throw new IllegalStateException("A promise cannot be resolved with itself.");
+		}
+		
+		// Promise Resolution Procedure:
+		// https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
+		try {
+			thenable.then(new ResolveCallback<V, Object>() {
+				@Override
+				public Promise<Object> onResolve(final V value) {
+					resolve(value);
+					return null;
+				}
+			}, new RejectCallback<Object>() {
+				@Override
+				public Promise<Object> onReject(final Throwable exception) {
+					reject(exception);
+					return null;
+				}
+			});
+		} catch (final Exception e) {
+			reject(e);
 		}
 	}
 	
