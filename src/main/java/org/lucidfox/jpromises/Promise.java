@@ -110,9 +110,7 @@ public final class Promise<V> implements Thenable<V> {
 				}
 			});
 		} catch (final Exception e) {
-			synchronized (lock) {
-				reject(e);
-			}
+			reject(e);
 		}
 	}
 	
@@ -237,9 +235,7 @@ public final class Promise<V> implements Thenable<V> {
 		deferredInvoker.invokeDeferred(new Runnable() {
 			@Override
 			public void run() {
-				synchronized (lock) {
-					processDeferred();
-				}
+				processDeferred();
 			}
 		});
 	}
@@ -247,9 +243,19 @@ public final class Promise<V> implements Thenable<V> {
 	private <R> void processDeferred() {
 		assert state == State.RESOLVED || state == State.REJECTED;
 		
-		while (!deferreds.isEmpty()) {
-			@SuppressWarnings("unchecked")
-			final Deferred<V, R> deferred = (Deferred<V, R>) deferreds.remove();
+		while (true) {
+			final Deferred<V, R> deferred;
+			
+			synchronized (lock) {
+				if (deferreds.isEmpty()) {
+					return;
+				}
+				
+				@SuppressWarnings("unchecked")
+				final Deferred<V, R> tmp = (Deferred<V, R>) deferreds.remove();
+				deferred = tmp;
+			}
+			
 			Thenable<R> next = null;
 			Throwable exceptionInCallback = null;
 			
