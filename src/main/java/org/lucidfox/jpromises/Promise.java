@@ -275,7 +275,9 @@ public final class Promise<V> implements Thenable<V> {
 				} else {
 					try {
 						next = deferred.rejectCallback.onReject(rejectedException);
-					} catch (final Exception e) {
+					} catch (final Error e) {
+						throw e;
+					} catch (final Throwable e) {
 						exceptionInCallback = e;
 					}
 				}
@@ -396,7 +398,7 @@ public final class Promise<V> implements Thenable<V> {
 			}
 		}, onReject == null ? null : new RejectCallback<R>() {
 			@Override
-			public Thenable<R> onReject(final Throwable exception) throws Exception {
+			public Thenable<R> onReject(final Throwable exception) throws Throwable {
 				return new Promise<R>(deferredInvoker, onReject.onReject(exception));
 			}
 		});
@@ -454,7 +456,7 @@ public final class Promise<V> implements Thenable<V> {
 			}
 		}, onReject == null ? null : new RejectCallback<Void>() {
 			@Override
-			public Thenable<Void> onReject(final Throwable exception) throws Exception {
+			public Thenable<Void> onReject(final Throwable exception) throws Throwable {
 				onReject.onReject(exception);
 				return null;
 			}

@@ -203,7 +203,9 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 			public Thenable<R> onReject(final Throwable exception) {
 				try {
 					return coerceToNativePromise(onReject.onReject(exception));
-				} catch (final Exception e) {
+				} catch (final Error e) {
+					throw e;
+				} catch (final Throwable e) {
 					// A Java exception propagating to a native then-handler would be bad. Coerce it to a native error.
 					return JsPromise.reject(e);
 				}

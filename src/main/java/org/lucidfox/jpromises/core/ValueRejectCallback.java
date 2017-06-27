@@ -36,7 +36,7 @@ public interface ValueRejectCallback<R> {
 	 * @param exception the exception with which the promise was rejected
 	 * @return the value to pass to the promise returned by {@code thenApply}, and thus the next resolve callback
 	 * in the {@code then} chain
-	 * @throws Exception Signals that an error occurred when handling the exception.
+	 * @throws Throwable Signals that an error occurred when handling the exception.
 	 */
-	R onReject(Throwable exception) throws Exception;
+	R onReject(Throwable exception) throws Throwable;
 }
