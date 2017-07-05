@@ -30,7 +30,7 @@ And if you need the GWT module:
 <dependency>
   <groupId>org.lucidfox.jpromises</groupId>
   <artifactId>jpromises-gwt</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
 </dependency>
 ```
 
