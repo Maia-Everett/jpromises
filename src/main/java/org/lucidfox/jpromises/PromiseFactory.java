@@ -148,22 +148,6 @@ public class PromiseFactory {
 	}
 	
 	/**
-	 * <p>
-	 * Instantiates a {@link Promise} resolved to {@code null}.
-	 * </p><p>
-	 * This method will rarely be used. Returning {@code null} from resolved/rejected callbacks does the same
-	 * thing, and is faster. It may be necessary if interacting with custom thenables that do not allow
-	 * resolved/rejected callbacks to return null.
-	 * </p>
-	 *
-	 * @param <V> the value type of the promise
-	 * @return the promise resolved to null
-	 */
-	public final <V> Promise<V> ofNull() {
-		return resolve(null);
-	}
-	
-	/**
 	 * Instantiates a {@link Promise} resolved to the specified value. This is useful for returning a static value
 	 * from resolved/rejected callbacks in {@code then}, which is allowed by the Promises/A+ specification, but not
 	 * expressible in Java's static type system.
