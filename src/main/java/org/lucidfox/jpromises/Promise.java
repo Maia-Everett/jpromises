@@ -208,7 +208,8 @@ public final class Promise<V> implements Thenable<V> {
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
 	@Override
-	public <R> Promise<R> then(final ResolveCallback<? super V, R> onResolve, final RejectCallback<R> onReject) {
+	public <R> Promise<R> then(final ResolveCallback<? super V, ? extends R> onResolve,
+							   final RejectCallback<? extends R> onReject) {
 		final Deferred<V, R> deferred = new Deferred<>();
 		deferred.resolveCallback = onResolve;
 		deferred.rejectCallback = onReject;
@@ -256,7 +257,7 @@ public final class Promise<V> implements Thenable<V> {
 				deferred = tmp;
 			}
 			
-			Thenable<R> next = null;
+			Thenable<? extends R> next = null;
 			Throwable exceptionInCallback = null;
 			
 			if (state == State.RESOLVED) {
@@ -323,7 +324,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onResolve the resolve callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public <R> Promise<R> then(final ResolveCallback<? super V, R> onResolve) {
+	public <R> Promise<R> then(final ResolveCallback<? super V, ? extends R> onResolve) {
 		return then(onResolve, null);
 	}
 	
@@ -336,7 +337,8 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, R> onResolve, final RejectCallback<R> onReject) {
+	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, R> onResolve,
+									  final RejectCallback<? extends R> onReject) {
 		return then(onResolve, onReject);
 	}
 	
@@ -349,7 +351,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onResolve the resolve callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, R> onResolve) {
+	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, ? extends R> onResolve) {
 		return then(onResolve, null);
 	}
 	
@@ -361,7 +363,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public Promise<V> onException(final RejectCallback<V> onReject) {
+	public Promise<V> onException(final RejectCallback<? extends V> onReject) {
 		return then(new ResolveCallback<V, V>() {
 			@Override
 			public Thenable<V> onResolve(final V value) throws Exception {
@@ -389,8 +391,8 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public <R> Promise<R> thenApply(final ValueResolveCallback<? super V, R> onResolve,
-			final ValueRejectCallback<R> onReject) {
+	public <R> Promise<R> thenApply(final ValueResolveCallback<? super V, ? extends R> onResolve,
+			final ValueRejectCallback<? extends R> onReject) {
 		return then(onResolve == null ? null : new ResolveCallback<V, R>() {
 			@Override
 			public Thenable<R> onResolve(final V value) throws Exception {
@@ -412,7 +414,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onResolve the resolve callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public <R> Promise<R> thenApply(final ValueResolveCallback<? super V, R> onResolve) {
+	public <R> Promise<R> thenApply(final ValueResolveCallback<? super V, ? extends R> onResolve) {
 		return thenApply(onResolve, null);
 	}
 	
@@ -424,7 +426,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public Promise<V> onExceptionApply(final ValueRejectCallback<V> onReject) {
+	public Promise<V> onExceptionApply(final ValueRejectCallback<? extends V> onReject) {
 		return thenApply(new ValueResolveCallback<V, V>() {
 			@Override
 			public V onResolve(final V value) throws Exception {
@@ -539,8 +541,8 @@ public final class Promise<V> implements Thenable<V> {
 	}
 	
 	private static class Deferred<V, R> {
-		private ResolveCallback<? super V, R> resolveCallback;
-		private RejectCallback<R> rejectCallback;
+		private ResolveCallback<? super V, ? extends R> resolveCallback;
+		private RejectCallback<? extends R> rejectCallback;
 		private Resolver<R> thenResolver;
 	}
 }

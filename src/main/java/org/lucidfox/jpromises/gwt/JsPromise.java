@@ -187,7 +187,8 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	
 	// We wrap then0 (which in turn wraps native then) for better handling of Java objects and exceptions
 	@Override
-	public <R> JsPromise<R> then(final ResolveCallback<? super V, R> onResolve, final RejectCallback<R> onReject) {
+	public <R> JsPromise<R> then(final ResolveCallback<? super V, ? extends R> onResolve,
+								 final RejectCallback<? extends R> onReject) {
 		return then0(onResolve == null ? null : new ResolveCallback<V, R>() {
 			@Override
 			public Thenable<R> onResolve(final V value) {
@@ -219,7 +220,8 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 	// incompatibility with JS promise semantics.
 	// If onReject is null, we return null as the error handler, allowing exceptions to propagate to the next
 	// reject handler in the then-chain.
-	private native <R> JsPromise<R> then0(ResolveCallback<? super V, R> onResolve, RejectCallback<R> onReject) /*-{
+	private native <R> JsPromise<R> then0(ResolveCallback<? super V, ? extends R> onResolve,
+										  RejectCallback<R> onReject) /*-{
 		return this.then(function(value) {
 			if (!onResolve) {
 				return null;
@@ -232,10 +234,12 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 		});
 	}-*/;
 	
-	private static <V> Thenable<V> coerceToNativePromise(final Thenable<V> thenable) {
+	private static <V> Thenable<V> coerceToNativePromise(final Thenable<? extends V> thenable) {
 		if (thenable == null || thenable instanceof JavaScriptObject) {
 			// Compatible with native promises, no need to wrap
-			return thenable;
+			@SuppressWarnings("unchecked")
+			final Thenable<V> result = (Thenable<V>) thenable;
+			return result;
 		} else {
 			// Java object; need to wrap in native promise
 			return deferResolve(thenable);
