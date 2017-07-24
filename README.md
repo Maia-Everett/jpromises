@@ -12,7 +12,7 @@ and Java 8 is strongly recommended because lambda expressions make typical use c
 
 ## Latest release
 
-The most recent release is version 0.2.2. [(Javadoc)](https://www.javadoc.io/doc/org.lucidfox.jpromises/jpromises/0.2.2)
+The most recent release is version 0.3.0. [(Javadoc)](https://www.javadoc.io/doc/org.lucidfox.jpromises/jpromises/0.3.0)
 
 ### Maven
 
@@ -20,7 +20,7 @@ The most recent release is version 0.2.2. [(Javadoc)](https://www.javadoc.io/doc
 <dependency>
   <groupId>org.lucidfox.jpromises</groupId>
   <artifactId>jpromises</artifactId>
-  <version>0.2.2</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -30,20 +30,20 @@ And if you need the GWT module:
 <dependency>
   <groupId>org.lucidfox.jpromises</groupId>
   <artifactId>jpromises-gwt</artifactId>
-  <version>0.2.2</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```
-'org.lucidfox.jpromises:jpromises:0.2.2'
+'org.lucidfox.jpromises:jpromises:0.3.0'
 ```
 
 And if you need the GWT module:
 
 ```
-'org.lucidfox.jpromises:jpromises-gwt:0.2.2'
+'org.lucidfox.jpromises:jpromises-gwt:0.3.0'
 ```
 
 ## Advantages
