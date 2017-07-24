@@ -31,6 +31,7 @@ import org.lucidfox.jpromises.core.RejectCallback;
 import org.lucidfox.jpromises.core.ResolveCallback;
 import org.lucidfox.jpromises.core.Resolver;
 import org.lucidfox.jpromises.core.Thenable;
+import org.lucidfox.jpromises.core.ThrowingRunnable;
 import org.lucidfox.jpromises.core.ValueRejectCallback;
 import org.lucidfox.jpromises.core.ValueResolveCallback;
 import org.lucidfox.jpromises.core.VoidRejectCallback;
@@ -474,6 +475,47 @@ public final class Promise<V> implements Thenable<V> {
 	 */
 	public Promise<Void> thenAccept(final VoidResolveCallback<? super V> onResolve) {
 		return thenAccept(onResolve, null);
+	}
+	
+	/**
+	 * Returns a new {@code Promise} that, after this promise is resolved or rejected, calls {@code onResolve} and
+	 * becomes resolved to {@code null} if this promise was resolved, or calls {@code onReject} and becomes resolved
+	 * to {@code null} if this promise was rejected.
+	 * <p>
+	 * This implementation throws no exceptions. Any exception thrown during execution of {@code onResolve} or
+	 * {@code onReject} causes the resulting promise to be rejected with that exception.
+	 * </p>
+	 * 
+	 * @see #then(ResolveCallback,RejectCallback)
+	 * @param onResolve the resolve callback, ignoring the result of the promise (optional)
+	 * @param onReject the reject callback (optional)
+	 * @return a {@link Promise} that is chained after the current promise
+	 */
+	public Promise<Void> thenRun(final ThrowingRunnable onResolve, final VoidRejectCallback onReject) {
+		return then(onResolve == null ? null : new ResolveCallback<V, Void>() {
+			@Override
+			public Thenable<Void> onResolve(final V value) throws Exception {
+				onResolve.run();
+				return null;
+			}
+		}, onReject == null ? null : new RejectCallback<Void>() {
+			@Override
+			public Thenable<Void> onReject(final Throwable exception) throws Throwable {
+				onReject.onReject(exception);
+				return null;
+			}
+		});
+	}
+	
+	/**
+	 * Calls {@code thenRun(onResolve, null)}.
+	 * 
+	 * @see #thenRun(ThrowingRunnable,VoidRejectCallback)
+	 * @param onResolve the resolve callback (optional)
+	 * @return a {@link Promise} that is chained after the current promise
+	 */
+	public Promise<Void> thenRun(final ThrowingRunnable onResolve) {
+		return thenRun(onResolve, null);
 	}
 	
 	/**
