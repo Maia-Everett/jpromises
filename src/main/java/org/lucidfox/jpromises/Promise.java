@@ -338,7 +338,7 @@ public final class Promise<V> implements Thenable<V> {
 	 * @param onReject the reject callback (optional)
 	 * @return a {@link Promise} that is chained after the current promise
 	 */
-	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, R> onResolve,
+	public <R> Promise<R> thenCompose(final ResolveCallback<? super V, ? extends R> onResolve,
 									  final RejectCallback<? extends R> onReject) {
 		return then(onResolve, onReject);
 	}
