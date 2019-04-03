@@ -2,9 +2,6 @@
 /build
 /.idea
 /.gradle
-/gradle
-/gradlew
-/gradlew.bat
 /jpromises.iml
 /.classpath
 /.project
