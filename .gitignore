@@ -13,3 +13,4 @@
 /.checkstyle
 /local.properties
 .*.html
+/.vscode
