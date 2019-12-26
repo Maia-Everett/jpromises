@@ -234,7 +234,7 @@ public final class JsPromise<V> extends JavaScriptObject implements Thenable<V> 
 		
 			return onResolve.@ResolveCallback::onResolve(Ljava/lang/Object;)(value);
 		}, !onReject ? null : function(err) {
-			var exception = error.__jsPromiseWrappedException || @JsPromise::toException(Ljava/lang/Object;)(err);
+			var exception = err.__jsPromiseWrappedException || @JsPromise::toException(Ljava/lang/Object;)(err);
 			return onReject.@RejectCallback::onReject(Ljava/lang/Throwable;)(exception);
 		});
 	}-*/;
