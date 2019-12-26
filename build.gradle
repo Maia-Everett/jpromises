@@ -133,28 +133,28 @@ uploadArchives {
 				developers {
 					developer {
 						name 'Maia Everett'
-						email 'maia@lucidfox.org'
-						url 'http://lucidfox.org'
+						email 'maia@everett.one'
+						url 'https://maia.everett.one'
 					}
 				}
 				
 				scm {
-					url 'https://github.com/lucidfox/jpromises'
-					connection 'https://github.com/lucidfox/jpromises.git'
-					developerConnection 'git@github.com:lucidfox/jpromises.git'
+					url 'https://github.com/Maia-Everett/jpromises'
+					connection 'https://github.com/Maia-Everett/jpromises.git'
+					developerConnection 'git@github.com:Maia-Everett/jpromises.git'
 				}
 				
 				name 'Java Library for Promises'
 				description 'An implementation of Promises in Java based on the JavaScript Promises/A+ specification,' +
 					' with adapters for AWT and GWT.'
-				url 'https://github.com/lucidfox/jpromises'
+				url 'https://github.com/Maia-Everett/jpromises'
 			}
 		   
 			pom('gwt').project {
 				name 'Java Library for Promises - GWT module'
 				description 'An implementation of Promises in Java based on the JavaScript Promises/A+ specification,' +
 					' with adapters for AWT and GWT. This artifact contains a GWT module with packaged sources.'
-				url 'https://github.com/lucidfox/jpromises'
+				url 'https://github.com/Maia-Everett/jpromises'
 			}
 			
 			pom('gwt').model.licenses = pom('default').model.licenses
