@@ -6,7 +6,7 @@ apply plugin: 'signing'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 group = 'org.lucidfox.jpromises'
-version = '0.3.1'
+version = '0.3.2'
 
 wrapper {
 	gradleVersion = '5.3.1'
@@ -39,10 +39,8 @@ jar {
 }
 
 javadoc {
-	failOnError false
-
 	options.links("http://docs.oracle.com/javase/7/docs/api/")
-	options.links("http://www.gwtproject.org/javadoc/latest")
+	options.links("http://www.gwtproject.org/javadoc/latest/")
 	options.links("https://developer.android.com/reference/")
 
 	options.addStringOption('tag', 'apiNote:a:API Note:')
@@ -56,6 +54,7 @@ repositories {
 
 dependencies {
 	compileOnly group: 'com.google.gwt', name: 'gwt-user', version: '2.7.0'
+	compileOnly group: 'com.google.gwt', name: 'gwt-dev', version: '2.7.0'
 	compileOnly group: 'com.google.android', name: 'android', version: '2.1.2'
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 }
